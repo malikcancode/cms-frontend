@@ -9,7 +9,6 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Loader from "./pages/sections/Loader";
 
-// Lazy load section pages
 const DashboardSection = lazy(() => import("./pages/sections/Dashboard"));
 const Projects = lazy(() => import("./pages/sections/Projects"));
 const ChartOfAccounts = lazy(() => import("./pages/sections/ChartOfAccounts"));
