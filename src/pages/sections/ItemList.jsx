@@ -27,7 +27,7 @@ export default function ItemList() {
     purchasePrice: "",
     measurement: "",
     saleTaxRate: "",
-    valuationCost: "",
+    quantity: "",
     sellingPrice: "",
   });
 
@@ -110,7 +110,7 @@ export default function ItemList() {
       purchasePrice: item.purchasePrice || "",
       measurement: item.measurement || "",
       saleTaxRate: item.saleTaxRate || "",
-      valuationCost: item.valuationCost || "",
+      quantity: item.quantity || "",
       sellingPrice: item.sellingPrice || "",
     });
     setShowForm(true);
@@ -146,7 +146,7 @@ export default function ItemList() {
       purchasePrice: "",
       measurement: "",
       saleTaxRate: "",
-      valuationCost: "",
+      quantity: "",
       sellingPrice: "",
     });
     setEditingItem(null);
@@ -328,12 +328,13 @@ export default function ItemList() {
 
             <input
               type="number"
-              placeholder="Valuation Cost"
-              value={formData.valuationCost}
+              placeholder="Available Quantity"
+              value={formData.quantity}
               onChange={(e) =>
-                setFormData({ ...formData, valuationCost: e.target.value })
+                setFormData({ ...formData, quantity: e.target.value })
               }
               className="px-4 py-2 border border-border rounded-lg bg-background focus:ring-primary focus:ring-2"
+              required
             />
 
             <input

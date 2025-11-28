@@ -49,6 +49,8 @@ export default function SalesInvoice() {
         discountPercent: 0,
         discount: 0,
         netAmount: 0,
+        availableStock: null,
+        itemId: null,
       },
     ],
 
@@ -160,6 +162,8 @@ export default function SalesInvoice() {
         itemCode: selectedItem.itemCode || "",
         unit: selectedItem.measurement || "",
         rate: selectedItem.sellingPrice || 0,
+        availableStock: selectedItem.currentStock || 0,
+        itemId: selectedItem._id,
       };
 
       // Recalculate amounts
@@ -221,6 +225,8 @@ export default function SalesInvoice() {
           discountPercent: 0,
           discount: 0,
           netAmount: 0,
+          availableStock: null,
+          itemId: null,
         },
       ],
     });
@@ -237,6 +243,30 @@ export default function SalesInvoice() {
 
     try {
       setLoading(true);
+
+      // Validate stock availability before submission (for new invoices)
+      if (!editingInvoice) {
+        const stockErrors = [];
+        for (const item of formData.items) {
+          const quantity = parseFloat(item.quantity) || 0;
+          const availableStock = item.availableStock || 0;
+
+          if (quantity > availableStock) {
+            stockErrors.push(
+              `Item ${item.itemCode}: Requested ${quantity} ${item.unit}, but only ${availableStock} available in stock`
+            );
+          }
+        }
+
+        if (stockErrors.length > 0) {
+          setError(
+            "Insufficient stock for the following items:\n" +
+              stockErrors.join("\n")
+          );
+          setLoading(false);
+          return;
+        }
+      }
 
       // Validate and calculate totals
       const processedItems = formData.items.map((item) => ({
@@ -303,6 +333,8 @@ export default function SalesInvoice() {
           discountPercent: 0,
           discount: 0,
           netAmount: 0,
+          availableStock: null,
+          itemId: null,
         },
       ],
       inventoryLocation: "",
@@ -1116,19 +1148,41 @@ export default function SalesInvoice() {
                         />
                       </td>
                       <td className="px-2 py-2">
-                        <input
-                          type="number"
-                          placeholder="0"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleItemChange(
-                              index,
-                              "quantity",
-                              parseFloat(e.target.value) || 0
-                            )
-                          }
-                          className="w-16 px-2 py-1 border border-border rounded bg-background text-foreground text-xs"
-                        />
+                        <div>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "quantity",
+                                parseFloat(e.target.value) || 0
+                              )
+                            }
+                            className={`w-16 px-2 py-1 border rounded bg-background text-foreground text-xs ${
+                              item.availableStock !== null &&
+                              parseFloat(item.quantity || 0) >
+                                item.availableStock
+                                ? "border-red-500"
+                                : "border-border"
+                            }`}
+                          />
+                          {item.availableStock !== null && (
+                            <div className="text-xs mt-1">
+                              <span
+                                className={
+                                  parseFloat(item.quantity || 0) >
+                                  item.availableStock
+                                    ? "text-red-600 font-medium"
+                                    : "text-muted-foreground"
+                                }
+                              >
+                                Stock: {item.availableStock}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-2 py-2">
                         <input

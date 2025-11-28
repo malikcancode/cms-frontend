@@ -44,6 +44,7 @@ export default function PurchaseEntry() {
     grossAmount: "",
     discount: "",
     netAmount: "",
+    itemCurrentStock: 0,
   });
 
   // Fetch all data on component mount
@@ -163,6 +164,7 @@ export default function PurchaseEntry() {
         itemCode: selectedItem.itemCode,
         itemName: selectedItem.name,
         unit: selectedItem.measurement,
+        itemCurrentStock: selectedItem.currentStock || 0,
         // Don't auto-fill description - let user enter manually
       });
     }
@@ -189,14 +191,19 @@ export default function PurchaseEntry() {
     setSuccessMessage("");
 
     try {
+      const purchaseQuantity = parseFloat(formData.quantity);
+
       const purchaseData = {
         ...formData,
-        quantity: parseFloat(formData.quantity),
+        quantity: purchaseQuantity,
         rate: parseFloat(formData.rate),
         grossAmount: parseFloat(formData.grossAmount),
         discount: parseFloat(formData.discount) || 0,
         netAmount: parseFloat(formData.netAmount),
       };
+
+      // Remove display-only fields before sending
+      delete purchaseData.itemCurrentStock;
 
       let response;
       if (editingPurchase) {
@@ -243,6 +250,9 @@ export default function PurchaseEntry() {
       grossAmount: "",
       discount: "",
       netAmount: "",
+      maxQuantityAllowed: null,
+      itemAvailableQuantity: null,
+      itemCurrentStock: null,
     });
   };
 
@@ -772,16 +782,23 @@ export default function PurchaseEntry() {
               className="px-4 py-2 border border-border rounded-lg bg-background focus:ring-primary focus:ring-2 md:col-span-2 h-20"
             />
 
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={formData.quantity}
-              onChange={(e) =>
-                setFormData({ ...formData, quantity: e.target.value })
-              }
-              className="px-4 py-2 border border-border rounded-lg bg-background focus:ring-primary focus:ring-2"
-              required
-            />
+            <div>
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={formData.quantity}
+                onChange={(e) =>
+                  setFormData({ ...formData, quantity: e.target.value })
+                }
+                className="px-4 py-2 border border-border rounded-lg bg-background focus:ring-primary focus:ring-2 w-full"
+                required
+              />
+              {formData.item && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Current Stock: {formData.itemCurrentStock}
+                </p>
+              )}
+            </div>
 
             <input
               type="text"

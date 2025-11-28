@@ -19,7 +19,6 @@ const SalesInvoice = lazy(() => import("../pages/sections/SalesInvoice"));
 const ProjectLedger = lazy(() => import("../pages/sections/ProjectLedger"));
 const CustomerLedger = lazy(() => import("../pages/sections/CustomerLedger"));
 const SupplierLedger = lazy(() => import("../pages/sections/SupplierLedger"));
-const IncomeStatement = lazy(() => import("../pages/sections/IncomeStatement"));
 const InventoryReport = lazy(() => import("../pages/sections/InventoryReport"));
 
 export default function MainContent({ currentPage }) {
@@ -49,7 +48,6 @@ export default function MainContent({ currentPage }) {
           {currentPage === "project-ledger" && <ProjectLedger />}
           {currentPage === "customer-ledger" && <CustomerLedger />}
           {currentPage === "supplier-ledger" && <SupplierLedger />}
-          {currentPage === "income-statement" && <IncomeStatement />}
           {currentPage === "inventory-report" && <InventoryReport />}
         </Suspense>
       </div>

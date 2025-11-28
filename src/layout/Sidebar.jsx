@@ -68,7 +68,6 @@ const menuItems = [
       { label: "Project Ledger", value: "project-ledger" },
       { label: "Customer Ledger", value: "customer-ledger" },
       { label: "Vendor Ledger", value: "vendor-ledger" },
-      { label: "Income Statement", value: "income-statement" },
       { label: "Inventory Report", value: "inventory-report" },
     ],
   },

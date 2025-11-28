@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // Backend API URL
-const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
-
+// const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
+const API_URL = "http://localhost:5000/api";
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
