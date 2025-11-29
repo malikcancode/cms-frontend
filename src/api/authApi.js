@@ -1,48 +1,4 @@
-import axios from "axios";
-
-// Backend API URL
-const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
-// const API_URL = "http://localhost:5000/api";
-
-// Create axios instance with base configuration
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 60000, // Increased to 60 seconds for serverless cold starts
-});
-
-// Add token to requests if it exists
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Handle response errors globally
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear invalid token
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      // Redirect to login if not already there
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+import api from "./config";
 
 // Auth API functions
 export const authApi = {
