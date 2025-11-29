@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiBarChart2, FiDollarSign, FiBox, FiTrendingUp } from "react-icons/fi";
+import {
+  FiBarChart2,
+  FiDollarSign,
+  FiBox,
+  FiTrendingUp,
+  FiTrendingDown,
+  FiMinus,
+} from "react-icons/fi";
 import dashboardApi from "../../api/dashboardApi";
 import Loader from "./Loader";
 
@@ -14,6 +21,23 @@ export default function Dashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Helper function to parse change and determine if it's positive, negative, or neutral
+  const parseChange = (changeStr) => {
+    if (!changeStr)
+      return { value: 0, isPositive: false, isNegative: false, display: "0%" };
+
+    const str = String(changeStr).trim();
+    const numericValue = parseFloat(str.replace(/[^0-9.-]/g, ""));
+
+    return {
+      value: numericValue,
+      isPositive: numericValue > 0,
+      isNegative: numericValue < 0,
+      isNeutral: numericValue === 0,
+      display: str,
+    };
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -44,6 +68,7 @@ export default function Dashboard() {
           title: "Total Expenses",
           value: `Rs. ${(statsData.totalExpenses || 0).toLocaleString()}`,
           change: statsData.expensesChange || "0%",
+          changeData: parseChange(statsData.expensesChange || "0%"),
           icon: FiDollarSign,
           color: "text-red-500",
           bgColor: "bg-red-50",
@@ -52,6 +77,7 @@ export default function Dashboard() {
           title: "Total Sales",
           value: `Rs. ${(statsData.totalSales || 0).toLocaleString()}`,
           change: statsData.salesChange || "0%",
+          changeData: parseChange(statsData.salesChange || "0%"),
           icon: FiTrendingUp,
           color: "text-green-500",
           bgColor: "bg-green-50",
@@ -60,6 +86,7 @@ export default function Dashboard() {
           title: "Net Profit",
           value: `Rs. ${(statsData.netProfit || 0).toLocaleString()}`,
           change: statsData.profitChange || "0%",
+          changeData: parseChange(statsData.profitChange || "0%"),
           icon: FiBarChart2,
           color: "text-blue-500",
           bgColor: "bg-blue-50",
@@ -68,6 +95,7 @@ export default function Dashboard() {
           title: "Active Projects",
           value: (statsData.activeProjects || 0).toString(),
           change: statsData.projectsChange || "0",
+          changeData: parseChange(statsData.projectsChange || "0"),
           icon: FiBox,
           color: "text-purple-500",
           bgColor: "bg-purple-50",
@@ -84,6 +112,7 @@ export default function Dashboard() {
           title: "Total Expenses",
           value: "Rs. 0",
           change: "0%",
+          changeData: parseChange("0%"),
           icon: FiDollarSign,
           color: "text-red-500",
           bgColor: "bg-red-50",
@@ -92,6 +121,7 @@ export default function Dashboard() {
           title: "Total Sales",
           value: "Rs. 0",
           change: "0%",
+          changeData: parseChange("0%"),
           icon: FiTrendingUp,
           color: "text-green-500",
           bgColor: "bg-green-50",
@@ -100,6 +130,7 @@ export default function Dashboard() {
           title: "Net Profit",
           value: "Rs. 0",
           change: "0%",
+          changeData: parseChange("0%"),
           icon: FiBarChart2,
           color: "text-blue-500",
           bgColor: "bg-blue-50",
@@ -108,6 +139,7 @@ export default function Dashboard() {
           title: "Active Projects",
           value: "0",
           change: "0",
+          changeData: parseChange("0"),
           icon: FiBox,
           color: "text-purple-500",
           bgColor: "bg-purple-50",
@@ -140,6 +172,26 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
+          const { isPositive, isNegative, isNeutral, display } =
+            stat.changeData;
+
+          // Determine trend icon and colors
+          const TrendIcon = isPositive
+            ? FiTrendingUp
+            : isNegative
+            ? FiTrendingDown
+            : FiMinus;
+          const trendColor = isPositive
+            ? "text-green-600"
+            : isNegative
+            ? "text-red-600"
+            : "text-gray-500";
+          const trendBgColor = isPositive
+            ? "bg-green-50"
+            : isNegative
+            ? "bg-red-50"
+            : "bg-gray-50";
+
           return (
             <div
               key={stat.title}
@@ -154,7 +206,7 @@ export default function Dashboard() {
               />
 
               <div className="flex items-start justify-between relative z-10">
-                <div>
+                <div className="flex-1">
                   <p className="text-muted-foreground text-sm font-medium tracking-wide">
                     {stat.title}
                   </p>
@@ -163,9 +215,15 @@ export default function Dashboard() {
                     {stat.value}
                   </p>
 
-                  <p className="text-xs font-semibold mt-2 text-green-600">
-                    {stat.change}
-                  </p>
+                  {/* Dynamic trend indicator */}
+                  <div
+                    className={`inline-flex items-center gap-1 mt-3 px-2 py-1 rounded-md ${trendBgColor}`}
+                  >
+                    <TrendIcon className={`w-3.5 h-3.5 ${trendColor}`} />
+                    <span className={`text-xs font-semibold ${trendColor}`}>
+                      {display}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Icon container */}

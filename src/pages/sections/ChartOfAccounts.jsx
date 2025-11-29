@@ -785,7 +785,9 @@ export default function ChartOfAccounts() {
                       {account.subAccounts && account.subAccounts.length > 0 ? (
                         <ul className="list-disc list-inside">
                           {account.subAccounts.map((sub, index) => (
-                            <li key={sub._id || index}>
+                            <li
+                              key={sub._id || sub.id || `${sub.code}-${index}`}
+                            >
                               {sub.code} - {sub.type}
                             </li>
                           ))}
@@ -799,7 +801,9 @@ export default function ChartOfAccounts() {
                       account.listAccounts.length > 0 ? (
                         <ul className="list-disc list-inside">
                           {account.listAccounts.map((acc, index) => (
-                            <li key={acc._id || index}>
+                            <li
+                              key={acc._id || acc.id || `${acc.code}-${index}`}
+                            >
                               {acc.code} - {acc.name}
                             </li>
                           ))}

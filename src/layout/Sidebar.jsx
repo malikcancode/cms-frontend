@@ -61,6 +61,18 @@ const menuItems = [
     ],
   },
   {
+    label: "Accounting",
+    value: "accounting",
+    icon: FiBarChart2,
+    submenu: [
+      { label: "Journal Entries", value: "journal-entries" },
+      { label: "General Ledger", value: "general-ledger" },
+      { label: "Trial Balance", value: "trial-balance" },
+      { label: "Balance Sheet", value: "balance-sheet" },
+      { label: "Profit & Loss", value: "profit-loss" },
+    ],
+  },
+  {
     label: "Reports",
     value: "reports",
     icon: FiBarChart2,

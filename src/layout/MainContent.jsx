@@ -20,6 +20,15 @@ const ProjectLedger = lazy(() => import("../pages/sections/ProjectLedger"));
 const CustomerLedger = lazy(() => import("../pages/sections/CustomerLedger"));
 const SupplierLedger = lazy(() => import("../pages/sections/SupplierLedger"));
 const InventoryReport = lazy(() => import("../pages/sections/InventoryReport"));
+const JournalEntries = lazy(() => import("../pages/sections/JournalEntries"));
+const GeneralLedger = lazy(() => import("../pages/sections/GeneralLedger"));
+const TrialBalance = lazy(() => import("../pages/sections/TrialBalance"));
+const BalanceSheetReport = lazy(() =>
+  import("../pages/sections/BalanceSheetReport")
+);
+const ProfitLossStatement = lazy(() =>
+  import("../pages/sections/ProfitLossStatement")
+);
 
 export default function MainContent({ currentPage }) {
   return (
@@ -38,6 +47,7 @@ export default function MainContent({ currentPage }) {
           {currentPage === "items" && <ItemList />}
           {currentPage === "plots" && <Plots />}
           {currentPage === "customers" && <Customers />}
+          {currentPage === "vendor" && <Suppliers />}
           {currentPage === "suppliers" && <Suppliers />}
           {currentPage === "users" && <Users />}
           {currentPage === "cash-bank-payment" && <CashBankPayment />}
@@ -49,6 +59,11 @@ export default function MainContent({ currentPage }) {
           {currentPage === "customer-ledger" && <CustomerLedger />}
           {currentPage === "supplier-ledger" && <SupplierLedger />}
           {currentPage === "inventory-report" && <InventoryReport />}
+          {currentPage === "journal-entries" && <JournalEntries />}
+          {currentPage === "general-ledger" && <GeneralLedger />}
+          {currentPage === "trial-balance" && <TrialBalance />}
+          {currentPage === "balance-sheet" && <BalanceSheetReport />}
+          {currentPage === "profit-loss" && <ProfitLossStatement />}
         </Suspense>
       </div>
     </main>

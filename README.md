@@ -24,10 +24,27 @@ Modern React-based frontend for the Construction Management System with comprehe
 
 ### 💰 Financial Management
 
-- Chart of Accounts
-- Cash Payment processing
-- Bank Payment processing
-- Customer and Supplier ledgers
+- **Double-Entry Accounting System**
+  - Automatic journal entry creation from transactions
+  - Manual journal entry creation for adjustments
+  - Journal entry reversal functionality
+- **General Ledger**
+  - Running balances for all accounts
+  - Filter by date range, account, or project
+  - Drill-down to source transactions
+- **Chart of Accounts**
+  - Five account types: Asset, Liability, Equity, Revenue, Expense
+  - Opening balance support
+- **Financial Statements**
+  - Trial Balance (verify debits = credits)
+  - Balance Sheet (Assets = Liabilities + Equity)
+  - Profit & Loss Statement (Revenue - Expenses)
+- **Payment Processing**
+  - Cash Payment processing
+  - Bank Payment processing
+- **Ledgers**
+  - Customer and Supplier ledgers
+  - Project-based accounting
 
 ### 🏗️ Project Management
 
@@ -68,8 +85,21 @@ client/
 ├── public/                 # Static assets
 ├── src/
 │   ├── api/               # API service layer
-│   │   ├── authApi.js     # Authentication API
-│   │   └── userApi.js     # User management API
+│   │   ├── authApi.js                # Authentication API
+│   │   ├── userApi.js                # User management API
+│   │   ├── journalEntryApi.js        # Journal entry API
+│   │   ├── generalLedgerApi.js       # General ledger API
+│   │   ├── accountTypeApi.js         # Account type API
+│   │   ├── chartOfAccountApi.js      # Chart of accounts API
+│   │   ├── customerApi.js            # Customer API
+│   │   ├── supplierApi.js            # Supplier API
+│   │   ├── projectApi.js             # Project API
+│   │   ├── itemApi.js                # Item API
+│   │   ├── purchaseApi.js            # Purchase API
+│   │   ├── salesInvoiceApi.js        # Sales invoice API
+│   │   ├── bankPaymentApi.js         # Bank payment API
+│   │   ├── reportApi.js              # Report API
+│   │   └── dashboardApi.js           # Dashboard API
 │   ├── components/        # Reusable components
 │   │   ├── Modal.jsx
 │   │   ├── PermissionRoute.jsx
@@ -88,26 +118,28 @@ client/
 │   │   ├── NotFoundPage.jsx
 │   │   ├── UnauthorizedPage.jsx
 │   │   └── sections/      # Feature sections
-│   │       ├── BalanceSheet.jsx
-│   │       ├── BankPayment.jsx
-│   │       ├── CashPayment.jsx
-│   │       ├── ChartOfAccounts.jsx
-│   │       ├── CustomerLedger.jsx
-│   │       ├── Customers.jsx
 │   │       ├── Dashboard.jsx
-│   │       ├── IncomeStatement.jsx
-│   │       ├── InventoryReport.jsx
-│   │       ├── ItemList.jsx
-│   │       ├── Loader.jsx
-│   │       ├── Plots.jsx
-│   │       ├── ProjectLedger.jsx
+│   │       ├── Users.jsx
+│   │       ├── ChartOfAccounts.jsx
+│   │       ├── CashPayment.jsx
+│   │       ├── BankPayment.jsx
+│   │       ├── Customers.jsx
+│   │       ├── Suppliers.jsx
 │   │       ├── Projects.jsx
+│   │       ├── ItemList.jsx
 │   │       ├── PurchaseEntry.jsx
 │   │       ├── SalesInvoice.jsx
+│   │       ├── JournalEntries.jsx        # 🆕 Journal entry management
+│   │       ├── GeneralLedger.jsx         # 🆕 General ledger view
+│   │       ├── TrialBalance.jsx          # 🆕 Trial balance report
+│   │       ├── BalanceSheetReport.jsx    # 🆕 Balance sheet
+│   │       ├── ProfitLossStatement.jsx   # 🆕 P&L statement
+│   │       ├── CustomerLedger.jsx
 │   │       ├── SupplierLedger.jsx
-│   │       ├── Suppliers.jsx
-│   │       ├── TrialBalance.jsx
-│   │       └── Users.jsx
+│   │       ├── ProjectLedger.jsx
+│   │       ├── InventoryReport.jsx
+│   │       ├── IncomeStatement.jsx
+│   │       └── Loader.jsx
 │   ├── App.jsx            # Root component
 │   ├── main.jsx           # Entry point
 │   └── index.css          # Global styles
@@ -192,25 +224,41 @@ The application will be available at `http://localhost:5173`
 
 ### Protected Routes
 
+#### General
+
 - `/` - Dashboard (All authenticated users)
 - `/users` - User management (Admin only)
+
+#### Maintain (Setup)
+
 - `/chart-of-accounts` - Chart of accounts (Admin, Accountant)
-- `/cash-payment` - Cash payments (Admin, Accountant)
-- `/bank-payment` - Bank payments (Admin, Accountant)
 - `/customers` - Customer management
 - `/suppliers` - Supplier management
 - `/projects` - Project management
-- `/plots` - Plot management
 - `/item-list` - Inventory items
-- `/purchase-entry` - Purchase entry
-- `/sales-invoice` - Sales invoicing
-- `/balance-sheet` - Balance sheet report
-- `/income-statement` - Income statement report
-- `/trial-balance` - Trial balance report
+
+#### Operations (Transactions)
+
+- `/purchase-entry` - Purchase entry (Purchase permission)
+- `/sales-invoice` - Sales invoicing (Sales permission)
+- `/cash-payment` - Cash payments (Admin, Accountant)
+- `/bank-payment` - Bank payments (Admin, Accountant)
+
+#### Accounting (Double-Entry System) 🆕
+
+- `/journal-entries` - Journal entry management (Accounting permission)
+- `/general-ledger` - General ledger view (Accounting permission)
+- `/trial-balance` - Trial balance report (Accounting permission)
+- `/balance-sheet-report` - Balance sheet (Accounting permission)
+- `/profit-loss-statement` - Profit & Loss statement (Accounting permission)
+
+#### Reports
+
 - `/customer-ledger` - Customer ledger
 - `/supplier-ledger` - Supplier ledger
 - `/project-ledger` - Project ledger
 - `/inventory-report` - Inventory report
+- `/income-statement` - Income statement report
 
 ## 🔌 API Integration
 
@@ -301,6 +349,12 @@ For support, please contact the development team or open an issue in the GitHub 
 
 ### Latest Updates
 
+- ✅ **Double-Entry Accounting System** - Complete accounting engine with automatic journal entries
+- ✅ **Journal Entries** - Create, edit, reverse, and post journal entries
+- ✅ **General Ledger** - View all transactions with running balances
+- ✅ **Trial Balance** - Verify that debits equal credits
+- ✅ **Balance Sheet** - Assets = Liabilities + Equity financial statement
+- ✅ **Profit & Loss Statement** - Revenue - Expenses = Net Profit/Loss
 - ✅ Fixed CORS configuration
 - ✅ Updated production API URL
 - ✅ Implemented role-based access control

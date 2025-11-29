@@ -25,6 +25,15 @@ const CustomerLedger = lazy(() => import("./pages/sections/CustomerLedger"));
 const SupplierLedger = lazy(() => import("./pages/sections/SupplierLedger"));
 const IncomeStatement = lazy(() => import("./pages/sections/IncomeStatement"));
 const InventoryReport = lazy(() => import("./pages/sections/InventoryReport"));
+const JournalEntries = lazy(() => import("./pages/sections/JournalEntries"));
+const GeneralLedger = lazy(() => import("./pages/sections/GeneralLedger"));
+const TrialBalance = lazy(() => import("./pages/sections/TrialBalance"));
+const BalanceSheetReport = lazy(() =>
+  import("./pages/sections/BalanceSheetReport")
+);
+const ProfitLossStatement = lazy(() =>
+  import("./pages/sections/ProfitLossStatement")
+);
 
 function App() {
   return (
@@ -305,6 +314,86 @@ function App() {
                         }
                       >
                         <InventoryReport />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="journal-entries"
+                  element={
+                    <PermissionRoute permission="accounting">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <JournalEntries />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="general-ledger"
+                  element={
+                    <PermissionRoute permission="accounting">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <GeneralLedger />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="trial-balance"
+                  element={
+                    <PermissionRoute permission="accounting">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <TrialBalance />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="balance-sheet"
+                  element={
+                    <PermissionRoute permission="accounting">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <BalanceSheetReport />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="profit-loss"
+                  element={
+                    <PermissionRoute permission="accounting">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <ProfitLossStatement />
                       </Suspense>
                     </PermissionRoute>
                   }
