@@ -15,6 +15,7 @@ import Loader from "./Loader";
 export default function Dashboard() {
   const [stats, setStats] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]);
+  const [plotStats, setPlotStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -44,11 +45,13 @@ export default function Dashboard() {
       setLoading(true);
       setError("");
 
-      // Fetch stats and recent projects in parallel
-      const [statsResponse, projectsResponse] = await Promise.all([
-        dashboardApi.getStats(),
-        dashboardApi.getRecentProjects(3),
-      ]);
+      // Fetch stats, recent projects, and plot stats in parallel
+      const [statsResponse, projectsResponse, plotStatsResponse] =
+        await Promise.all([
+          dashboardApi.getStats(),
+          dashboardApi.getRecentProjects(3),
+          dashboardApi.getPlotStats(),
+        ]);
 
       // Handle empty or missing data gracefully
       const statsData = statsResponse?.data?.stats || {
@@ -104,6 +107,7 @@ export default function Dashboard() {
 
       setStats(formattedStats);
       setRecentProjects(projectsResponse?.data || []);
+      setPlotStats(plotStatsResponse?.data || null);
     } catch (err) {
       console.error("Dashboard error:", err);
       // Set default values instead of showing error
@@ -147,6 +151,7 @@ export default function Dashboard() {
       ];
       setStats(defaultStats);
       setRecentProjects([]);
+      setPlotStats(null);
       // Don't show error for empty data or common issues
     } finally {
       setLoading(false);
@@ -241,6 +246,61 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      {/* Plot Statistics */}
+      {plotStats && (
+        <div className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">
+            Plots Overview
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <p className="text-2xl font-bold text-green-600">
+                {plotStats.available}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Available</p>
+            </div>
+            <div className="text-center p-4 bg-yellow-50 rounded-lg">
+              <p className="text-2xl font-bold text-yellow-600">
+                {plotStats.booked}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Booked</p>
+            </div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <p className="text-2xl font-bold text-blue-600">
+                {plotStats.sold}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Sold</p>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
+              <p className="text-2xl font-bold text-purple-600">
+                {plotStats.total}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Total Plots</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">Total Sales Value</p>
+              <p className="text-xl font-bold text-foreground mt-1">
+                Rs. {(plotStats.totalSalesValue || 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">Amount Received</p>
+              <p className="text-xl font-bold text-green-600 mt-1">
+                Rs. {(plotStats.totalReceived || 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">Balance Due</p>
+              <p className="text-xl font-bold text-orange-600 mt-1">
+                Rs. {(plotStats.totalOutstanding || 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Projects */}
       <div className="bg-card border border-border rounded-lg p-6">

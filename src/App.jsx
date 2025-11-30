@@ -13,6 +13,7 @@ const DashboardSection = lazy(() => import("./pages/sections/Dashboard"));
 const Projects = lazy(() => import("./pages/sections/Projects"));
 const ChartOfAccounts = lazy(() => import("./pages/sections/ChartOfAccounts"));
 const ItemList = lazy(() => import("./pages/sections/ItemList"));
+const Plots = lazy(() => import("./pages/sections/Plots"));
 const Customers = lazy(() => import("./pages/sections/Customers"));
 const Suppliers = lazy(() => import("./pages/sections/Suppliers"));
 const Users = lazy(() => import("./pages/sections/Users"));
@@ -25,6 +26,7 @@ const CustomerLedger = lazy(() => import("./pages/sections/CustomerLedger"));
 const SupplierLedger = lazy(() => import("./pages/sections/SupplierLedger"));
 const IncomeStatement = lazy(() => import("./pages/sections/IncomeStatement"));
 const InventoryReport = lazy(() => import("./pages/sections/InventoryReport"));
+const PlotsReport = lazy(() => import("./pages/sections/PlotsReport"));
 const JournalEntries = lazy(() => import("./pages/sections/JournalEntries"));
 const GeneralLedger = lazy(() => import("./pages/sections/GeneralLedger"));
 const TrialBalance = lazy(() => import("./pages/sections/TrialBalance"));
@@ -120,6 +122,22 @@ function App() {
                         }
                       >
                         <ItemList />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="plots"
+                  element={
+                    <PermissionRoute permission="projects">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <Plots />
                       </Suspense>
                     </PermissionRoute>
                   }
@@ -314,6 +332,22 @@ function App() {
                         }
                       >
                         <InventoryReport />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+                <Route
+                  path="plots-report"
+                  element={
+                    <PermissionRoute permission="reports">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <PlotsReport />
                       </Suspense>
                     </PermissionRoute>
                   }

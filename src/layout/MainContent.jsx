@@ -20,6 +20,7 @@ const ProjectLedger = lazy(() => import("../pages/sections/ProjectLedger"));
 const CustomerLedger = lazy(() => import("../pages/sections/CustomerLedger"));
 const SupplierLedger = lazy(() => import("../pages/sections/SupplierLedger"));
 const InventoryReport = lazy(() => import("../pages/sections/InventoryReport"));
+const PlotsReport = lazy(() => import("../pages/sections/PlotsReport"));
 const JournalEntries = lazy(() => import("../pages/sections/JournalEntries"));
 const GeneralLedger = lazy(() => import("../pages/sections/GeneralLedger"));
 const TrialBalance = lazy(() => import("../pages/sections/TrialBalance"));
@@ -59,6 +60,7 @@ export default function MainContent({ currentPage }) {
           {currentPage === "customer-ledger" && <CustomerLedger />}
           {currentPage === "supplier-ledger" && <SupplierLedger />}
           {currentPage === "inventory-report" && <InventoryReport />}
+          {currentPage === "plots-report" && <PlotsReport />}
           {currentPage === "journal-entries" && <JournalEntries />}
           {currentPage === "general-ledger" && <GeneralLedger />}
           {currentPage === "trial-balance" && <TrialBalance />}

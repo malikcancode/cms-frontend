@@ -49,6 +49,24 @@ export const reportApi = {
       );
     }
   },
+
+  // Get plots report
+  getPlotsReport: async (filters = {}) => {
+    try {
+      let url = "/reports/plots";
+      const params = new URLSearchParams();
+      if (filters.project) params.append("project", filters.project);
+      if (filters.status) params.append("status", filters.status);
+      if (filters.startDate) params.append("startDate", filters.startDate);
+      if (filters.endDate) params.append("endDate", filters.endDate);
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const response = await api.get(url);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: "Failed to fetch plots report" };
+    }
+  },
 };
 
 export default reportApi;

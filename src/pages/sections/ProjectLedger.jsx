@@ -80,6 +80,7 @@ export default function ProjectLedger() {
     summary,
     purchases,
     bankPayments,
+    cashPayments,
     salesInvoices,
     purchasesByVendor,
     paymentsByAccount,
@@ -160,6 +161,10 @@ export default function ProjectLedger() {
           </p>
           <p className="text-2xl font-bold text-red-600 mt-2">
             Rs. {(summary.totalExpenses || 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Bank: Rs. {(summary.totalBankPayments || 0).toLocaleString()} |
+            Cash: Rs. {(summary.totalCashPayments || 0).toLocaleString()}
           </p>
         </div>
         <div className="bg-card border border-border rounded-lg p-6">
@@ -388,8 +393,146 @@ export default function ProjectLedger() {
         </div>
       )}
 
+      {/* Cash Payments */}
+      {cashPayments && cashPayments.length > 0 && (
+        <div className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">
+            Cash Payments (Labour & Other Expenses)
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted border-b border-border">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Serial No
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Job Description
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Employee Ref
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Remarks
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Amount (Debit)
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {cashPayments.map((payment) => (
+                  <tr
+                    key={payment._id}
+                    className="hover:bg-muted/50 transition"
+                  >
+                    <td className="px-6 py-4 text-sm text-foreground">
+                      {new Date(payment.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                      {payment.serialNo}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                      {payment.jobDescription || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                      {payment.employeeRef?.name || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                      {payment.remarks || "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-red-600">
+                      Rs. {(payment.totalAmount || 0).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-muted font-bold">
+                  <td colSpan="5" className="px-6 py-4 text-sm text-foreground">
+                    Total Cash Payments
+                  </td>
+                  <td className="px-6 py-4 text-sm text-red-600">
+                    Rs. {(summary.totalCashPayments || 0).toLocaleString()}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Cash Payment Lines Details */}
+          <div className="mt-6">
+            <h3 className="text-md font-semibold text-foreground mb-3">
+              Cash Payment Lines Breakdown
+            </h3>
+            <div className="space-y-4">
+              {cashPayments.map((payment) => (
+                <div
+                  key={payment._id}
+                  className="border border-border rounded-lg p-4 bg-muted/30"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {payment.serialNo} -{" "}
+                        {new Date(payment.date).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {payment.jobDescription || "Cash Payment"}
+                      </p>
+                    </div>
+                    <p className="font-semibold text-foreground">
+                      Total: Rs. {(payment.totalAmount || 0).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50">
+                        <tr>
+                          <th className="px-4 py-2 text-left text-xs font-semibold text-foreground">
+                            Account Code
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-semibold text-foreground">
+                            Account Name
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-semibold text-foreground">
+                            Description
+                          </th>
+                          <th className="px-4 py-2 text-right text-xs font-semibold text-foreground">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {(payment.paymentLines || []).map((line, idx) => (
+                          <tr key={idx}>
+                            <td className="px-4 py-2 text-muted-foreground">
+                              {line.accountCode}
+                            </td>
+                            <td className="px-4 py-2 text-foreground">
+                              {line.accountName}
+                            </td>
+                            <td className="px-4 py-2 text-muted-foreground">
+                              {line.description || "-"}
+                            </td>
+                            <td className="px-4 py-2 text-right font-medium text-foreground">
+                              Rs. {(line.amount || 0).toLocaleString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Bank Payments (Labour/Other Expenses) */}
-      {bankPayments.length > 0 && (
+      {bankPayments && bankPayments.length > 0 && (
         <div className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-lg font-bold text-foreground mb-4">
             Bank Payments (Labour & Other Expenses)
@@ -546,7 +689,7 @@ export default function ProjectLedger() {
       {paymentsByAccount && paymentsByAccount.length > 0 && (
         <div className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-lg font-bold text-foreground mb-4">
-            Account-wise Payment Summary
+            Account-wise Payment Summary (Bank & Cash)
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -557,6 +700,9 @@ export default function ProjectLedger() {
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                     Account Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                    Payment Type
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                     No. of Transactions
@@ -574,6 +720,19 @@ export default function ProjectLedger() {
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-foreground">
                       {account.accountName}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          account.type === "Bank"
+                            ? "bg-blue-100 text-blue-800"
+                            : account.type === "Cash"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-purple-100 text-purple-800"
+                        }`}
+                      >
+                        {account.type || "N/A"}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {account.count} transaction(s)
@@ -757,10 +916,18 @@ export default function ProjectLedger() {
               </tr>
               <tr className="hover:bg-muted/50">
                 <td className="px-6 py-3 text-sm text-muted-foreground pl-12">
-                  Less: Labour & Other Expenses
+                  Less: Bank Payments (Labour & Other)
                 </td>
                 <td className="px-6 py-3 text-sm text-right text-red-600">
                   Rs. {(summary.totalBankPayments || 0).toLocaleString()}
+                </td>
+              </tr>
+              <tr className="hover:bg-muted/50">
+                <td className="px-6 py-3 text-sm text-muted-foreground pl-12">
+                  Less: Cash Payments (Labour & Other)
+                </td>
+                <td className="px-6 py-3 text-sm text-right text-red-600">
+                  Rs. {(summary.totalCashPayments || 0).toLocaleString()}
                 </td>
               </tr>
               <tr className="bg-muted font-bold border-t-2 border-border">

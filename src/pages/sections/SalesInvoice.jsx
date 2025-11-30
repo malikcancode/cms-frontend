@@ -8,6 +8,7 @@ import customerApi from "../../api/customerApi";
 import projectApi from "../../api/projectApi";
 import userApi from "../../api/userApi";
 import itemApi from "../../api/itemApi";
+import { getAllPlots } from "../../api/plotApi";
 import Loader from "./Loader";
 
 export default function SalesInvoice() {
@@ -16,6 +17,7 @@ export default function SalesInvoice() {
   const [projects, setProjects] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [items, setItems] = useState([]);
+  const [plots, setPlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState(null);
@@ -40,6 +42,7 @@ export default function SalesInvoice() {
     // Items
     items: [
       {
+        itemType: "Inventory",
         itemCode: "",
         description: "",
         quantity: "",
@@ -51,6 +54,7 @@ export default function SalesInvoice() {
         netAmount: 0,
         availableStock: null,
         itemId: null,
+        plotId: null,
       },
     ],
 
@@ -81,20 +85,28 @@ export default function SalesInvoice() {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [invoicesRes, customersRes, projectsRes, employeesRes, itemsRes] =
-        await Promise.all([
-          salesInvoiceApi.getAll(),
-          customerApi.getAll(),
-          projectApi.getAll(),
-          userApi.getAll(),
-          itemApi.getAll(),
-        ]);
+      const [
+        invoicesRes,
+        customersRes,
+        projectsRes,
+        employeesRes,
+        itemsRes,
+        plotsRes,
+      ] = await Promise.all([
+        salesInvoiceApi.getAll(),
+        customerApi.getAll(),
+        projectApi.getAll(),
+        userApi.getAll(),
+        itemApi.getAll(),
+        getAllPlots(),
+      ]);
 
       setInvoices(invoicesRes.data || []);
       setCustomers(customersRes.data || []);
       setProjects(projectsRes.data || []);
       setEmployees(employeesRes.data || []);
       setItems(itemsRes.data || []);
+      setPlots(plotsRes.data || []);
       setError("");
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -164,6 +176,34 @@ export default function SalesInvoice() {
         rate: selectedItem.sellingPrice || 0,
         availableStock: selectedItem.currentStock || 0,
         itemId: selectedItem._id,
+        plotId: null,
+      };
+
+      // Recalculate amounts
+      const { gross, discount, net } = calculateItemAmount(newItems[index]);
+      newItems[index].grossAmount = gross;
+      newItems[index].discount = discount;
+      newItems[index].netAmount = net;
+
+      setFormData({ ...formData, items: newItems });
+    }
+  };
+
+  // Handle plot selection from dropdown
+  const handlePlotSelect = (index, plotId) => {
+    const selectedPlot = plots.find((plot) => plot._id === plotId);
+
+    if (selectedPlot) {
+      const newItems = [...formData.items];
+      newItems[index] = {
+        ...newItems[index],
+        itemCode: selectedPlot.plotNumber || "",
+        description: `${selectedPlot.plotType} Plot - ${selectedPlot.plotSize} ${selectedPlot.unit}`,
+        unit: "plot",
+        rate: selectedPlot.rate || selectedPlot.basePrice || 0,
+        availableStock: selectedPlot.availableStock || 0,
+        itemId: null,
+        plotId: selectedPlot._id,
       };
 
       // Recalculate amounts
@@ -198,13 +238,33 @@ export default function SalesInvoice() {
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...formData.items];
-    newItems[index][field] = value;
 
-    if (["quantity", "rate", "discountPercent"].includes(field)) {
-      const { gross, discount, net } = calculateItemAmount(newItems[index]);
-      newItems[index].grossAmount = gross;
-      newItems[index].discount = discount;
-      newItems[index].netAmount = net;
+    // If itemType is changing, reset the item fields
+    if (field === "itemType") {
+      newItems[index] = {
+        itemType: value,
+        itemCode: "",
+        description: "",
+        quantity: "",
+        unit: "",
+        rate: "",
+        grossAmount: 0,
+        discountPercent: 0,
+        discount: 0,
+        netAmount: 0,
+        availableStock: null,
+        itemId: null,
+        plotId: null,
+      };
+    } else {
+      newItems[index][field] = value;
+
+      if (["quantity", "rate", "discountPercent"].includes(field)) {
+        const { gross, discount, net } = calculateItemAmount(newItems[index]);
+        newItems[index].grossAmount = gross;
+        newItems[index].discount = discount;
+        newItems[index].netAmount = net;
+      }
     }
 
     setFormData({ ...formData, items: newItems });
@@ -216,6 +276,7 @@ export default function SalesInvoice() {
       items: [
         ...formData.items,
         {
+          itemType: "Inventory",
           itemCode: "",
           description: "",
           quantity: "",
@@ -227,6 +288,7 @@ export default function SalesInvoice() {
           netAmount: 0,
           availableStock: null,
           itemId: null,
+          plotId: null,
         },
       ],
     });
@@ -270,6 +332,7 @@ export default function SalesInvoice() {
 
       // Validate and calculate totals
       const processedItems = formData.items.map((item) => ({
+        itemType: item.itemType || "Inventory",
         itemCode: item.itemCode,
         description: item.description || "",
         quantity: parseFloat(item.quantity) || 0,
@@ -279,6 +342,8 @@ export default function SalesInvoice() {
         discountPercent: parseFloat(item.discountPercent) || 0,
         discount: parseFloat(item.discount) || 0,
         netAmount: parseFloat(item.netAmount) || 0,
+        plot: item.plotId || undefined,
+        item: item.itemId || undefined,
       }));
 
       const invoiceData = {
@@ -324,6 +389,7 @@ export default function SalesInvoice() {
       telephone: "",
       items: [
         {
+          itemType: "Inventory",
           itemCode: "",
           description: "",
           quantity: "",
@@ -335,6 +401,7 @@ export default function SalesInvoice() {
           netAmount: 0,
           availableStock: null,
           itemId: null,
+          plotId: null,
         },
       ],
       inventoryLocation: "",
@@ -1079,7 +1146,10 @@ export default function SalesInvoice() {
                 <thead className="bg-muted">
                   <tr>
                     <th className="px-2 py-2 text-left text-xs font-semibold">
-                      Item Code
+                      Type
+                    </th>
+                    <th className="px-2 py-2 text-left text-xs font-semibold">
+                      Item/Plot Code
                     </th>
                     <th className="px-2 py-2 text-left text-xs font-semibold">
                       Description
@@ -1113,24 +1183,66 @@ export default function SalesInvoice() {
                     <tr key={index} className="border-b border-border">
                       <td className="px-2 py-2">
                         <select
-                          value={item.itemCode}
-                          onChange={(e) => {
-                            const selectedItem = items.find(
-                              (i) => i.itemCode === e.target.value
-                            );
-                            if (selectedItem) {
-                              handleItemSelect(index, selectedItem._id);
-                            }
-                          }}
-                          className="w-32 px-2 py-1 border border-border rounded bg-background text-foreground text-xs"
+                          value={item.itemType}
+                          onChange={(e) =>
+                            handleItemChange(index, "itemType", e.target.value)
+                          }
+                          className="w-24 px-2 py-1 border border-border rounded bg-background text-foreground text-xs"
                         >
-                          <option value="">-- Select Item --</option>
-                          {items.map((inv) => (
-                            <option key={inv._id} value={inv.itemCode}>
-                              {inv.itemCode} - {inv.name}
-                            </option>
-                          ))}
+                          <option value="Inventory">Item</option>
+                          <option value="Plot">Plot</option>
                         </select>
+                      </td>
+                      <td className="px-2 py-2">
+                        {item.itemType === "Plot" ? (
+                          <select
+                            value={item.plotId || ""}
+                            onChange={(e) => {
+                              const selectedPlot = plots.find(
+                                (p) => p._id === e.target.value
+                              );
+                              if (selectedPlot) {
+                                handlePlotSelect(index, selectedPlot._id);
+                              }
+                            }}
+                            className="w-32 px-2 py-1 border border-border rounded bg-background text-foreground text-xs"
+                          >
+                            <option value="">-- Select Plot --</option>
+                            {plots
+                              .filter(
+                                (p) =>
+                                  p.status === "Available" ||
+                                  p.status === "Booked" ||
+                                  p.status === "Hold" ||
+                                  p.status === "Under Construction"
+                              )
+                              .map((plot) => (
+                                <option key={plot._id} value={plot._id}>
+                                  {plot.plotNumber} - {plot.status}
+                                </option>
+                              ))}
+                          </select>
+                        ) : (
+                          <select
+                            value={item.itemCode}
+                            onChange={(e) => {
+                              const selectedItem = items.find(
+                                (i) => i.itemCode === e.target.value
+                              );
+                              if (selectedItem) {
+                                handleItemSelect(index, selectedItem._id);
+                              }
+                            }}
+                            className="w-32 px-2 py-1 border border-border rounded bg-background text-foreground text-xs"
+                          >
+                            <option value="">-- Select Item --</option>
+                            {items.map((inv) => (
+                              <option key={inv._id} value={inv.itemCode}>
+                                {inv.itemCode} - {inv.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </td>
                       <td className="px-2 py-2">
                         <textarea

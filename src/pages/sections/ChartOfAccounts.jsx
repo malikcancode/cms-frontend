@@ -117,25 +117,25 @@ export default function ChartOfAccounts() {
     setSubAccounts(subAccounts.filter((acc) => acc.id !== id));
   };
 
-  const handleAddListAccount = () => {
-    if (formData.accountCode && formData.accountName) {
-      const newListAccount = {
-        id: Date.now(),
-        code: formData.accountCode,
-        name: formData.accountName,
-      };
-      setListAccounts([...listAccounts, newListAccount]);
-      setFormData({
-        ...formData,
-        accountCode: "",
-        accountName: "",
-      });
-    }
-  };
+  // const handleAddListAccount = () => {
+  //   if (formData.accountCode && formData.accountName) {
+  //     const newListAccount = {
+  //       id: Date.now(),
+  //       code: formData.accountCode,
+  //       name: formData.accountName,
+  //     };
+  //     setListAccounts([...listAccounts, newListAccount]);
+  //     setFormData({
+  //       ...formData,
+  //       accountCode: "",
+  //       accountName: "",
+  //     });
+  //   }
+  // };
 
-  const handleDeleteListAccount = (id) => {
-    setListAccounts(listAccounts.filter((acc) => acc.id !== id));
-  };
+  // const handleDeleteListAccount = (id) => {
+  //   setListAccounts(listAccounts.filter((acc) => acc.id !== id));
+  // };
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -629,7 +629,7 @@ export default function ChartOfAccounts() {
           {/* =========================== */}
           {/*       LIST OF ACCOUNTS      */}
           {/* =========================== */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <h2 className="font-semibold text-lg text-foreground border-b border-border pb-2">
               List of Accounts
             </h2>
@@ -665,7 +665,6 @@ export default function ChartOfAccounts() {
               Add Account
             </button>
 
-            {/* List of Accounts */}
             {listAccounts.length > 0 && (
               <div className="mt-4 border border-border rounded-lg overflow-hidden">
                 <table className="w-full">
@@ -706,7 +705,7 @@ export default function ChartOfAccounts() {
                 </table>
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="flex gap-4">
             <button
@@ -750,9 +749,9 @@ export default function ChartOfAccounts() {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                   Sub Accounts
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
+                {/* <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                   Accounts
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                   Actions
                 </th>
@@ -762,7 +761,7 @@ export default function ChartOfAccounts() {
               {accounts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="5"
                     className="px-6 py-8 text-center text-muted-foreground"
                   >
                     No accounts found. Click "Add Account" to create one.
@@ -798,7 +797,7 @@ export default function ChartOfAccounts() {
                         <span className="text-muted-foreground/50">None</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    {/* <td className="px-6 py-4 text-sm text-muted-foreground">
                       {account.listAccounts &&
                       account.listAccounts.length > 0 ? (
                         <ul className="list-disc list-inside">
@@ -813,7 +812,7 @@ export default function ChartOfAccounts() {
                       ) : (
                         <span className="text-muted-foreground/50">None</span>
                       )}
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 text-sm flex gap-2">
                       <button
                         onClick={() => handleEdit(account)}

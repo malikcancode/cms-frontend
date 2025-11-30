@@ -25,6 +25,7 @@ const menuItems = [
     icon: FiSettings,
     submenu: [
       { label: "Projects", value: "projects" },
+      { label: "Plots", value: "plots" },
       { label: "Chart of Accounts", value: "chart-of-accounts" },
       { label: "Chart of Inventory", value: "items" },
     ],
@@ -81,6 +82,7 @@ const menuItems = [
       { label: "Customer Ledger", value: "customer-ledger" },
       { label: "Vendor Ledger", value: "vendor-ledger" },
       { label: "Inventory Report", value: "inventory-report" },
+      { label: "Plots Report", value: "plots-report" },
     ],
   },
 ];
