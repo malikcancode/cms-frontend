@@ -11,6 +11,20 @@ import {
 } from "react-icons/fi";
 import dashboardApi from "../../api/dashboardApi";
 import Loader from "./Loader";
+import {
+  ExpenseBreakdownChart,
+  RevenueTrendChart,
+  RevenueVsExpensesChart,
+  ProjectStatusChart,
+  CashFlowChart,
+  TopProjectsChart,
+  ProjectsOverBudgetChart,
+  AccountsReceivableChart,
+  AccountsPayableChart,
+  LowStockAlertsChart,
+  TopSuppliersChart,
+  TopCustomersChart,
+} from "../../components/charts/DashboardCharts";
 
 export default function Dashboard() {
   const [stats, setStats] = useState([]);
@@ -18,6 +32,58 @@ export default function Dashboard() {
   const [plotStats, setPlotStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedChart, setSelectedChart] = useState("expense-breakdown");
+
+  // Chart options for dropdown
+  const chartOptions = [
+    { value: "expense-breakdown", label: "Expense Breakdown (Pie Chart)" },
+    { value: "revenue-trend", label: "Revenue Trend (Line Chart)" },
+    { value: "revenue-vs-expenses", label: "Revenue vs Expenses (Bar Chart)" },
+    {
+      value: "project-status",
+      label: "Project Status Distribution (Pie Chart)",
+    },
+    { value: "cash-flow", label: "Cash Flow Summary" },
+    { value: "top-projects", label: "Top 5 Projects by Revenue" },
+    { value: "projects-over-budget", label: "Projects Over Budget (Alerts)" },
+    { value: "accounts-receivable", label: "Accounts Receivable Summary" },
+    { value: "accounts-payable", label: "Accounts Payable Summary" },
+    { value: "low-stock-alerts", label: "Low Stock Alerts" },
+    { value: "top-suppliers", label: "Top Suppliers by Volume" },
+    { value: "top-customers", label: "Top Customers by Revenue" },
+  ];
+
+  // Render selected chart
+  const renderSelectedChart = () => {
+    switch (selectedChart) {
+      case "expense-breakdown":
+        return <ExpenseBreakdownChart />;
+      case "revenue-trend":
+        return <RevenueTrendChart />;
+      case "revenue-vs-expenses":
+        return <RevenueVsExpensesChart />;
+      case "project-status":
+        return <ProjectStatusChart />;
+      case "cash-flow":
+        return <CashFlowChart />;
+      case "top-projects":
+        return <TopProjectsChart />;
+      case "projects-over-budget":
+        return <ProjectsOverBudgetChart />;
+      case "accounts-receivable":
+        return <AccountsReceivableChart />;
+      case "accounts-payable":
+        return <AccountsPayableChart />;
+      case "low-stock-alerts":
+        return <LowStockAlertsChart />;
+      case "top-suppliers":
+        return <TopSuppliersChart />;
+      case "top-customers":
+        return <TopCustomersChart />;
+      default:
+        return <ExpenseBreakdownChart />;
+    }
+  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -305,6 +371,40 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Analytics Charts Section */}
+      <div className="bg-card border border-border rounded-lg p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <h2 className="text-lg font-bold text-foreground mb-3 md:mb-0">
+            Analytics & Insights
+          </h2>
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="chart-selector"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Select Chart:
+            </label>
+            <select
+              id="chart-selector"
+              value={selectedChart}
+              onChange={(e) => setSelectedChart(e.target.value)}
+              className="px-4 py-2 border border-border rounded-lg bg-background text-foreground
+                       focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                       cursor-pointer hover:border-primary transition-colors"
+            >
+              {chartOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Chart Display Area */}
+        <div className="min-h-[400px]">{renderSelectedChart()}</div>
+      </div>
 
       {/* Recent Projects */}
       <div className="bg-card border border-border rounded-lg p-6">

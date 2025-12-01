@@ -60,19 +60,38 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user has permission for a specific module
   const hasPermission = (permission) => {
-    if (!user) return false;
+    if (!user) {
+      console.log("hasPermission: No user");
+      return false;
+    }
 
     // Admin has all permissions
-    if (user.role === "admin") return true;
+    if (user.role === "admin") {
+      console.log(`hasPermission(${permission}): TRUE - Admin role`);
+      return true;
+    }
 
     // Operator has all permissions except user management
-    if (user.role === "operator") return permission !== "users";
+    if (user.role === "operator") {
+      const result = permission !== "users";
+      console.log(`hasPermission(${permission}): ${result} - Operator role`);
+      return result;
+    }
 
     // Custom role - check customPermissions
     if (user.role === "custom" && user.customPermissions) {
-      return user.customPermissions[permission] === true;
+      const result = user.customPermissions[permission] === true;
+      console.log(`hasPermission(${permission}):`, {
+        result,
+        permissionValue: user.customPermissions[permission],
+        allPermissions: user.customPermissions,
+      });
+      return result;
     }
 
+    console.log(
+      `hasPermission(${permission}): FALSE - No matching role/permission`
+    );
     return false;
   };
 

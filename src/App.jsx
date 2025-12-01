@@ -53,29 +53,33 @@ function App() {
                 <Route
                   index
                   element={
-                    <Suspense
-                      fallback={
-                        <div className="flex items-center justify-center min-h-[400px]">
-                          <Loader />
-                        </div>
-                      }
-                    >
-                      <DashboardSection />
-                    </Suspense>
+                    <PermissionRoute permission="dashboard">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <DashboardSection />
+                      </Suspense>
+                    </PermissionRoute>
                   }
                 />
                 <Route
                   path="overview"
                   element={
-                    <Suspense
-                      fallback={
-                        <div className="flex items-center justify-center min-h-[400px]">
-                          <Loader />
-                        </div>
-                      }
-                    >
-                      <DashboardSection />
-                    </Suspense>
+                    <PermissionRoute permission="dashboard">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <DashboardSection />
+                      </Suspense>
+                    </PermissionRoute>
                   }
                 />
                 <Route
@@ -129,7 +133,7 @@ function App() {
                 <Route
                   path="plots"
                   element={
-                    <PermissionRoute permission="projects">
+                    <PermissionRoute permission="plots">
                       <Suspense
                         fallback={
                           <div className="flex items-center justify-center min-h-[400px]">
@@ -162,7 +166,7 @@ function App() {
                 <Route
                   path="vendor"
                   element={
-                    <PermissionRoute permission="vendor">
+                    <PermissionRoute permission="suppliers">
                       <Suspense
                         fallback={
                           <div className="flex items-center justify-center min-h-[400px]">

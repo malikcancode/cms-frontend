@@ -115,7 +115,7 @@ export default function Sidebar({ currentPage, onNavigate, isOpen }) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } z-40`}
       >
-        <div className="p-6 border-b border-sidebar-border flex-shrink-0">
+        <div className="p-6 border-b border-sidebar-border shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center text-sidebar-primary-foreground font-bold">
