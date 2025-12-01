@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { FiPlus, FiPrinter, FiEdit2, FiTrash2, FiX } from "react-icons/fi";
 import Modal from "../../components/Modal";
+import Loader from "./Loader";
 import {
   getCashPayments,
   createCashPayment,
@@ -519,7 +520,7 @@ export default function CashPayment() {
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         {loading && !showForm ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <Loader />
           </div>
         ) : payments.length === 0 ? (
           <div className="text-center py-12">

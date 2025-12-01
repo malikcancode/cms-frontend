@@ -12,6 +12,7 @@ import {
   FiCalendar,
   FiTrendingUp,
 } from "react-icons/fi";
+import Loader from "./Loader";
 
 export default function PlotsReport() {
   const [reportData, setReportData] = useState(null);
@@ -148,11 +149,8 @@ export default function PlotsReport() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading plots report...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
       </div>
     );
   }

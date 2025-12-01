@@ -536,7 +536,11 @@ export default function BankPayment() {
   };
 
   if (loading && payments.length === 0) {
-    return <Loader />;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
   }
 
   return (

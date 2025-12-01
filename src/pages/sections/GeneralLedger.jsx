@@ -61,7 +61,13 @@ export default function GeneralLedger() {
     }
   };
 
-  if (loading && !ledger.length) return <Loader />;
+  if (loading && !ledger.length) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

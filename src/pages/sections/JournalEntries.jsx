@@ -233,7 +233,13 @@ export default function JournalEntries() {
 
   const { totalDebit, totalCredit, difference } = calculateTotals();
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

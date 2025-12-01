@@ -156,7 +156,11 @@ export default function Suppliers() {
 
   // Show loader while fetching data
   if (loading) {
-    return <Loader />;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
   }
 
   return (

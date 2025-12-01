@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { customerApi } from "../../api/customerApi";
+import Loader from "./Loader";
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -101,6 +102,14 @@ export default function Customers() {
     setFormData({ code: "", name: "", email: "", phone: "", address: "" });
     setError("");
   };
+
+  if (loading && customers.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

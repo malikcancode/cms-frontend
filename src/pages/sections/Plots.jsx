@@ -13,6 +13,7 @@ import { projectApi } from "../../api/projectApi";
 import { customerApi } from "../../api/customerApi";
 import Modal from "../../components/Modal";
 import { FiEdit2, FiTrash2, FiPlus, FiFilter } from "react-icons/fi";
+import Loader from "./Loader";
 
 export default function Plots() {
   const [plots, setPlots] = useState([]);
@@ -303,11 +304,8 @@ export default function Plots() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading plots...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
       </div>
     );
   }

@@ -57,7 +57,11 @@ export default function ProjectLedger() {
   };
 
   if (loading && !ledgerData) {
-    return <Loader />;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
   }
 
   if (!ledgerData || !ledgerData.project) {

@@ -72,7 +72,11 @@ export default function CustomerLedger() {
   };
 
   if (loading && customers.length === 0) {
-    return <Loader />;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
   }
 
   if (!selectedCustomer) {
