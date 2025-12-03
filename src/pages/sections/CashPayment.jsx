@@ -224,8 +224,190 @@ export default function CashPayment() {
   };
 
   const handlePrint = (payment) => {
-    // TODO: Implement print functionality
-    alert("Print functionality coming soon!");
+    if (!payment) return;
+
+    const formatCurrency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
+    const paymentDate = new Date(payment.date).toLocaleDateString("en-GB");
+
+    const rowsHtml = (payment.paymentLines || [])
+      .map((line, idx) => {
+        const code = line.accountCode || "";
+        const name = line.accountName || "";
+        const desc = line.description || "";
+        const amt = formatCurrency(line.amount || 0);
+        return `
+          <tr>
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:center;">${
+              idx + 1
+            }</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;">${code}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;">${name}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;">${desc}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:right;">${amt}</td>
+          </tr>`;
+      })
+      .join("");
+
+    const total = formatCurrency(payment.totalAmount || 0);
+    const status = payment.cancel ? "Cancelled" : "Active";
+    const projectText = payment.project?.name
+      ? `${payment.project.name} (${payment.project.code || ""})`
+      : "-";
+    const jobText = payment.jobDescription || "-";
+    const remarksText = payment.remarks || "-";
+
+    const html = `
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Cash Payment #${payment.serialNo || "-"}</title>
+        <style>
+          body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color:#111827; }
+          .container { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+          .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 16px; }
+          .title { font-size: 20px; font-weight: 700; }
+          .meta { font-size: 12px; color:#6b7280; }
+          .section { border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-top:12px; }
+          table { width:100%; border-collapse: collapse; margin-top:8px; }
+          .table-header th { background:#f3f4f6; border:1px solid #e5e7eb; padding:8px; font-size:12px; text-align:left; }
+          .summary { display:flex; justify-content:flex-end; margin-top:8px; }
+          .chip { display:inline-block; padding:4px 8px; border-radius:9999px; font-size:12px; }
+          .chip.active { background:#dcfce7; color:#166534; }
+          .chip.cancelled { background:#fee2e2; color:#991b1b; }
+          .footer { margin-top:24px; font-size:11px; color:#6b7280; }
+          @media print { .no-print { display:none; } body { margin:0; } }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div>
+              <div class="title">Cash Payment Voucher</div>
+              <div class="meta">Serial No: <strong>${
+                payment.serialNo || "-"
+              }</strong></div>
+            </div>
+            <div style="text-align:right;">
+              <div class="meta">Date: <strong>${paymentDate}</strong></div>
+              <div class="meta">Status: <span class="chip ${
+                payment.cancel ? "cancelled" : "active"
+              }">${status}</span></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+              <div class="meta">Project: <strong>${projectText}</strong></div>
+              <div class="meta">Job Description: <strong>${jobText}</strong></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div style="font-weight:600; margin-bottom:6px;">Payment Lines</div>
+            <table>
+              <thead class="table-header">
+                <tr>
+                  <th style="text-align:center;width:60px;">#</th>
+                  <th style="width:140px;">Account Code</th>
+                  <th>Account Name</th>
+                  <th>Description</th>
+                  <th style="text-align:right;width:140px;">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+            <div class="summary">
+              <div style="border:1px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-weight:700;">Total: ${total}</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div style="font-weight:600; margin-bottom:6px;">Accounting Summary</div>
+            <div style="font-size:12px; color:#1f2937;">
+              ${(payment.paymentLines || [])
+                .filter((l) => l.accountCode && Number(l.amount) > 0)
+                .map(
+                  (l) =>
+                    `• Debit: ${
+                      l.accountName || l.accountCode
+                    } - ${formatCurrency(l.amount)}`
+                )
+                .join("<br/>")}
+              ${
+                Number(payment.totalAmount) > 0
+                  ? `<br/>• Credit: Cash Account (1000) - ${total}`
+                  : ""
+              }
+            </div>
+          </div>
+
+          <div class="section">
+            <div style="font-weight:600; margin-bottom:6px;">Remarks</div>
+            <div class="meta">${remarksText}</div>
+          </div>
+
+          <div class="footer">
+            Printed on ${new Date().toLocaleString()} — Construction Management System
+          </div>
+
+          <div class="no-print" style="margin-top:16px;">
+            <button onclick="window.print()" style="padding:8px 12px; border:1px solid #e5e7eb; border-radius:6px; background:#111827; color:#fff;">Print</button>
+            <button onclick="window.close()" style="padding:8px 12px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; margin-left:8px;">Close</button>
+          </div>
+        </div>
+        <script>
+          // Auto-trigger print shortly after load for convenience
+          setTimeout(() => { try { window.print(); } catch (e) {} }, 250);
+        </script>
+      </body>
+      </html>
+    `;
+
+    // Try opening a new window first
+    const printWindow = window.open("", "_blank", "noopener,noreferrer");
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(html);
+      printWindow.document.close();
+      return;
+    }
+
+    // Fallback: use a hidden iframe for printing (avoids popup blockers)
+    try {
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "0";
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentWindow?.document || iframe.contentDocument;
+      if (!doc) throw new Error("Print iframe document not available");
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      // Wait for content to render, then print and cleanup
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } finally {
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 500);
+        }
+      }, 300);
+    } catch (e) {
+      console.error("Iframe print failed:", e);
+      alert("Printing failed. Please try again.");
+    }
   };
 
   const totalAmount = paymentLines.reduce(
