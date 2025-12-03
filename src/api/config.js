@@ -22,7 +22,8 @@ const api = axios.create({
   timeout: 60000, // Increased to 60 seconds for serverless cold starts
   withCredentials: true, // Enable sending cookies for CSRF protection
   maxRedirects: 5, // Limit redirects
-  validateStatus: (status) => status >= 200 && status < 500, // Don't reject on 4xx errors
+  // Only treat 2xx as success; 4xx/5xx go to catch
+  validateStatus: (status) => status >= 200 && status < 300,
 });
 
 // Add token to requests with security enhancements

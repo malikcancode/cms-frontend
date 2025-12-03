@@ -72,23 +72,10 @@ export const getCashPaymentsByDateRange = async (startDate, endDate) => {
   }
 };
 
-// Get expense accounts from Chart of Accounts
+// Get expense accounts from Chart of Accounts (sub-accounts only)
 export const getExpenseAccounts = async () => {
   try {
-    const response = await api.get("/chartofaccounts");
-    // Filter for expense type accounts
-    if (response.data.success && response.data.data) {
-      const expenseAccounts = response.data.data.filter(
-        (account) =>
-          account.accountType === "Expense" ||
-          account.financialComponent === "EXPENSE ACCOUNTS" ||
-          account.financialComponent === "Operating Expenses" ||
-          (account.mainAccountTypeText &&
-            (account.mainAccountTypeText.toLowerCase().includes("cost") ||
-              account.mainAccountTypeText.toLowerCase().includes("expense")))
-      );
-      return { success: true, data: expenseAccounts };
-    }
+    const response = await api.get("/cashpayments/expense-accounts");
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

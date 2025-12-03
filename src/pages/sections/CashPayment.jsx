@@ -109,11 +109,10 @@ export default function CashPayment() {
     // If account is selected, auto-fill account name
     if (field === "accountCode") {
       const selectedAccount = expenseAccounts.find(
-        (acc) => (acc.code || acc.mainTypeCode) === value
+        (acc) => acc.accountCode === value
       );
       if (selectedAccount) {
-        newLines[index].accountName =
-          selectedAccount.name || selectedAccount.mainAccountTypeText || "";
+        newLines[index].accountName = selectedAccount.accountName;
       }
     }
 
@@ -535,17 +534,11 @@ export default function CashPayment() {
                       required
                     >
                       <option value="">Select Account</option>
-                      {expenseAccounts.map((account) => {
-                        const accountCode =
-                          account.code || account.mainTypeCode;
-                        const accountName =
-                          account.name || account.mainAccountTypeText;
-                        return (
-                          <option key={account._id} value={accountCode}>
-                            {accountCode} - {accountName}
-                          </option>
-                        );
-                      })}
+                      {expenseAccounts.map((account, idx) => (
+                        <option key={idx} value={account.accountCode}>
+                          {account.accountCode} - {account.accountName}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
