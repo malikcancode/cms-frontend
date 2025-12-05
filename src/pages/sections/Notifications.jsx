@@ -120,7 +120,6 @@ export default function Notifications() {
       console.error("Error deleting read notifications:", err);
       setError(err.message || "Failed to delete read notifications");
     }
-  };}
   };
 
   const getNotificationIcon = (type) => {
