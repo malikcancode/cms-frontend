@@ -1,6 +1,7 @@
 "use client";
 
 import { FiMenu, FiLogOut } from "react-icons/fi";
+import NotificationBell from "../components/NotificationBell";
 
 export default function Header({ user, onLogout, onMenuClick }) {
   return (
@@ -13,6 +14,8 @@ export default function Header({ user, onLogout, onMenuClick }) {
       </button>
 
       <div className="flex items-center justify-end w-full gap-4">
+        <NotificationBell />
+
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold">
             {user?.name?.charAt(0).toUpperCase()}

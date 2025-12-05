@@ -21,6 +21,7 @@ const MyRequests = lazy(() => import("./pages/sections/MyRequests"));
 const AdminRequestApprovals = lazy(() =>
   import("./pages/sections/AdminRequestApprovals")
 );
+const Notifications = lazy(() => import("./pages/sections/Notifications"));
 const CashPayment = lazy(() => import("./pages/sections/CashPayment"));
 const BankPayment = lazy(() => import("./pages/sections/BankPayment"));
 const PurchaseEntry = lazy(() => import("./pages/sections/PurchaseEntry"));
@@ -231,6 +232,22 @@ function App() {
                         <AdminRequestApprovals />
                       </Suspense>
                     </PermissionRoute>
+                  }
+                />
+
+                {/* Notifications - All authenticated users */}
+                <Route
+                  path="notifications"
+                  element={
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center min-h-[400px]">
+                          <Loader />
+                        </div>
+                      }
+                    >
+                      <Notifications />
+                    </Suspense>
                   }
                 />
 
