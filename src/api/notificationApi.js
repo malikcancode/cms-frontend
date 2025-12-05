@@ -1,7 +1,6 @@
 import api from "./config";
 
 export const notificationApi = {
-  // Get all notifications for logged-in user
   getMyNotifications: async (page = 1, limit = 20) => {
     try {
       const response = await api.get(
@@ -14,7 +13,6 @@ export const notificationApi = {
     }
   },
 
-  // Get unread notifications count
   getUnreadCount: async () => {
     try {
       const response = await api.get("/notifications/unread-count");
