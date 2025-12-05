@@ -12,6 +12,8 @@ import {
   FiShoppingCart,
   FiUsers,
   FiX,
+  FiCheckCircle,
+  FiFileText,
 } from "react-icons/fi";
 
 const getMenuItems = (userRole) => [
@@ -60,20 +62,30 @@ const getMenuItems = (userRole) => [
       { label: "Customers", value: "customers" },
       { label: "Vendor", value: "vendor" },
       { label: "Users Management", value: "users", adminOnly: true },
-      { label: "My Requests", value: "my-requests", hideForAdmin: true },
-      {
-        label: "Request Approvals",
-        value: "request-approvals",
-        adminOnly: true,
-      },
     ].filter((item) => {
       // Filter out admin-only items for non-admins
       if (item.adminOnly && userRole !== "admin") return false;
-      // Filter out "My Requests" for admins
-      if (item.hideForAdmin && userRole === "admin") return false;
       return true;
     }),
   },
+  ...(userRole !== "admin"
+    ? [
+        {
+          label: "My Requests",
+          value: "my-requests",
+          icon: FiFileText,
+        },
+      ]
+    : []),
+  ...(userRole === "admin"
+    ? [
+        {
+          label: "Request Approvals",
+          value: "request-approvals",
+          icon: FiCheckCircle,
+        },
+      ]
+    : []),
   {
     label: "Accounting",
     value: "accounting",

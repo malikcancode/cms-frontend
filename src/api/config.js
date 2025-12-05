@@ -3,7 +3,6 @@ import axios from "axios";
 // ============================================
 // API Configuration
 // ============================================
-// Toggle between production and local by commenting/uncommenting
 
 // Production URL
 const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
