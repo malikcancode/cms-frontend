@@ -17,6 +17,10 @@ const Plots = lazy(() => import("./pages/sections/Plots"));
 const Customers = lazy(() => import("./pages/sections/Customers"));
 const Suppliers = lazy(() => import("./pages/sections/Suppliers"));
 const Users = lazy(() => import("./pages/sections/Users"));
+const MyRequests = lazy(() => import("./pages/sections/MyRequests"));
+const AdminRequestApprovals = lazy(() =>
+  import("./pages/sections/AdminRequestApprovals")
+);
 const CashPayment = lazy(() => import("./pages/sections/CashPayment"));
 const BankPayment = lazy(() => import("./pages/sections/BankPayment"));
 const PurchaseEntry = lazy(() => import("./pages/sections/PurchaseEntry"));
@@ -196,10 +200,44 @@ function App() {
                   }
                 />
 
+                {/* My Requests - Available to all authenticated users */}
+                <Route
+                  path="my-requests"
+                  element={
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center min-h-[400px]">
+                          <Loader />
+                        </div>
+                      }
+                    >
+                      <MyRequests />
+                    </Suspense>
+                  }
+                />
+
+                {/* Admin Request Approvals - Admin only */}
+                <Route
+                  path="request-approvals"
+                  element={
+                    <PermissionRoute permission="users">
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[400px]">
+                            <Loader />
+                          </div>
+                        }
+                      >
+                        <AdminRequestApprovals />
+                      </Suspense>
+                    </PermissionRoute>
+                  }
+                />
+
                 <Route
                   path="cash-payment"
                   element={
-                    <PermissionRoute permission="cashBankPayment">
+                    <PermissionRoute permission="cashPayment">
                       <Suspense
                         fallback={
                           <div className="flex items-center justify-center min-h-[400px]">
@@ -215,7 +253,7 @@ function App() {
                 <Route
                   path="bank-payment"
                   element={
-                    <PermissionRoute permission="cashBankPayment">
+                    <PermissionRoute permission="bankPayment">
                       <Suspense
                         fallback={
                           <div className="flex items-center justify-center min-h-[400px]">

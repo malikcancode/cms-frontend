@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiPrinter, FiEdit2, FiTrash2, FiX } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import Loader from "./Loader";
@@ -12,8 +12,11 @@ import {
   getExpenseAccounts,
 } from "../../api/cashPaymentApi";
 import { projectApi } from "../../api/projectApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function CashPayment() {
+  const { user } = useContext(AuthContext);
   const [payments, setPayments] = useState([]);
   const [projects, setProjects] = useState([]);
   const [expenseAccounts, setExpenseAccounts] = useState([]);
@@ -167,21 +170,42 @@ export default function CashPayment() {
         })),
       };
 
-      let response;
-      if (editingPayment) {
-        response = await updateCashPayment(editingPayment._id, paymentData);
-        alert("Cash payment updated successfully");
-      } else {
-        response = await createCashPayment(paymentData);
-        alert(
-          "Cash payment recorded successfully! Journal entry created automatically."
-        );
-      }
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        let response;
+        if (editingPayment) {
+          response = await updateCashPayment(editingPayment._id, paymentData);
+          alert("Cash payment updated successfully");
+        } else {
+          response = await createCashPayment(paymentData);
+          alert(
+            "Cash payment recorded successfully! Journal entry created automatically."
+          );
+        }
 
-      if (response.success) {
-        fetchPayments();
-        setShowForm(false);
-        resetForm();
+        if (response.success) {
+          fetchPayments();
+          setShowForm(false);
+          resetForm();
+        }
+      } else {
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: editingPayment
+            ? "edit_cash_payment"
+            : "create_cash_payment",
+          requestData: paymentData,
+          entityId: editingPayment?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
+        if (response.success) {
+          alert(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
+          setShowForm(false);
+          resetForm();
+        }
       }
     } catch (error) {
       console.error("Failed to save cash payment:", error);

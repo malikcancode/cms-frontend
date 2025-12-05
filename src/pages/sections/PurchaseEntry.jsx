@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiPrinter, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { purchaseApi } from "../../api/purchaseApi";
@@ -8,9 +8,12 @@ import { itemApi } from "../../api/itemApi";
 import { userApi } from "../../api/userApi";
 import { projectApi } from "../../api/projectApi";
 import { supplierApi } from "../../api/supplierApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function PurchaseEntry() {
+  const { user } = useContext(AuthContext);
   const [purchases, setPurchases] = useState([]);
   const [items, setItems] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -205,20 +208,43 @@ export default function PurchaseEntry() {
       // Remove display-only fields before sending
       delete purchaseData.itemCurrentStock;
 
-      let response;
-      if (editingPurchase) {
-        response = await purchaseApi.update(editingPurchase._id, purchaseData);
-        setSuccessMessage("Purchase updated successfully!");
-      } else {
-        response = await purchaseApi.create(purchaseData);
-        setSuccessMessage("Purchase created successfully!");
-      }
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        let response;
+        if (editingPurchase) {
+          response = await purchaseApi.update(
+            editingPurchase._id,
+            purchaseData
+          );
+          setSuccessMessage("Purchase updated successfully!");
+        } else {
+          response = await purchaseApi.create(purchaseData);
+          setSuccessMessage("Purchase created successfully!");
+        }
 
-      if (response.success) {
-        await fetchAllData();
-        resetForm();
-        setEditingPurchase(null);
-        setShowForm(false);
+        if (response.success) {
+          await fetchAllData();
+          resetForm();
+          setEditingPurchase(null);
+          setShowForm(false);
+        }
+      } else {
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: editingPurchase ? "edit_purchase" : "create_purchase",
+          requestData: purchaseData,
+          entityId: editingPurchase?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
+        if (response.success) {
+          setSuccessMessage(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
+          resetForm();
+          setEditingPurchase(null);
+          setShowForm(false);
+        }
       }
     } catch (error) {
       console.error("Error saving purchase:", error);

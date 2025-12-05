@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 import {
   FiHome,
@@ -13,7 +14,7 @@ import {
   FiX,
 } from "react-icons/fi";
 
-const menuItems = [
+const getMenuItems = (userRole) => [
   {
     label: "Dashboard",
     value: "dashboard",
@@ -58,8 +59,20 @@ const menuItems = [
     submenu: [
       { label: "Customers", value: "customers" },
       { label: "Vendor", value: "vendor" },
-      { label: "Users Management", value: "users" },
-    ],
+      { label: "Users Management", value: "users", adminOnly: true },
+      { label: "My Requests", value: "my-requests", hideForAdmin: true },
+      {
+        label: "Request Approvals",
+        value: "request-approvals",
+        adminOnly: true,
+      },
+    ].filter((item) => {
+      // Filter out admin-only items for non-admins
+      if (item.adminOnly && userRole !== "admin") return false;
+      // Filter out "My Requests" for admins
+      if (item.hideForAdmin && userRole === "admin") return false;
+      return true;
+    }),
   },
   {
     label: "Accounting",
@@ -88,7 +101,11 @@ const menuItems = [
 ];
 
 export default function Sidebar({ currentPage, onNavigate, isOpen }) {
+  const { user } = useContext(AuthContext);
   const [expandedMenus, setExpandedMenus] = useState({});
+
+  // Get menu items based on user role
+  const menuItems = getMenuItems(user?.role);
 
   const toggleSubmenu = (menuValue) => {
     setExpandedMenus((prev) => ({

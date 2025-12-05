@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { supplierApi } from "../../api/supplierApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function Suppliers() {
+  const { user } = useContext(AuthContext);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -85,21 +88,43 @@ export default function Suppliers() {
     setSuccessMessage("");
 
     try {
-      if (editMode) {
-        // Update existing supplier
-        const response = await supplierApi.update(currentSupplierId, formData);
-        if (response.success) {
-          setSuccessMessage("Supplier updated successfully!");
-          await fetchSuppliers();
-          resetForm();
-          setShowForm(false);
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        if (editMode) {
+          // Update existing supplier
+          const response = await supplierApi.update(
+            currentSupplierId,
+            formData
+          );
+          if (response.success) {
+            setSuccessMessage("Supplier updated successfully!");
+            await fetchSuppliers();
+            resetForm();
+            setShowForm(false);
+          }
+        } else {
+          // Create new supplier
+          const response = await supplierApi.create(formData);
+          if (response.success) {
+            setSuccessMessage("Supplier created successfully!");
+            await fetchSuppliers();
+            resetForm();
+            setShowForm(false);
+          }
         }
       } else {
-        // Create new supplier
-        const response = await supplierApi.create(formData);
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: editMode ? "edit_supplier" : "create_supplier",
+          requestData: formData,
+          entityId: currentSupplierId || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
         if (response.success) {
-          setSuccessMessage("Supplier created successfully!");
-          await fetchSuppliers();
+          setSuccessMessage(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
           resetForm();
           setShowForm(false);
         }

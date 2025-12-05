@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { projectApi } from "../../api/projectApi";
 import { customerApi } from "../../api/customerApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function Projects() {
+  const { user } = useContext(AuthContext);
   const [projects, setProjects] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,17 +75,37 @@ export default function Projects() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = editingProject
-        ? await projectApi.update(editingProject._id, formData)
-        : await projectApi.create(formData);
 
-      if (response.success) {
-        await fetchProjects();
-        resetForm();
-        alert(
-          response.message ||
-            `Project ${editingProject ? "updated" : "created"} successfully`
-        );
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        const response = editingProject
+          ? await projectApi.update(editingProject._id, formData)
+          : await projectApi.create(formData);
+
+        if (response.success) {
+          await fetchProjects();
+          resetForm();
+          alert(
+            response.message ||
+              `Project ${editingProject ? "updated" : "created"} successfully`
+          );
+        }
+      } else {
+        // Non-admin users (operators and custom users) must submit a request
+        const requestData = {
+          requestType: editingProject ? "edit_project" : "create_project",
+          requestData: formData,
+          projectId: editingProject?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
+
+        if (response.success) {
+          resetForm();
+          alert(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
+        }
       }
     } catch (err) {
       alert(

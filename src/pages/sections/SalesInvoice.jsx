@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiPrinter, FiShare2, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import salesInvoiceApi from "../../api/salesInvoiceApi";
@@ -9,9 +9,12 @@ import projectApi from "../../api/projectApi";
 import userApi from "../../api/userApi";
 import itemApi from "../../api/itemApi";
 import { getAllPlots } from "../../api/plotApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function SalesInvoice() {
+  const { user } = useContext(AuthContext);
   const [invoices, setInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -354,15 +357,32 @@ export default function SalesInvoice() {
         amountReceived: parseFloat(formData.amountReceived) || 0,
       };
 
-      if (editingInvoice) {
-        await salesInvoiceApi.update(editingInvoice._id, invoiceData);
-        setSuccessMessage("Sales invoice updated successfully!");
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        if (editingInvoice) {
+          await salesInvoiceApi.update(editingInvoice._id, invoiceData);
+          setSuccessMessage("Sales invoice updated successfully!");
+        } else {
+          await salesInvoiceApi.create(invoiceData);
+          setSuccessMessage("Sales invoice created successfully!");
+        }
+        await fetchAllData();
       } else {
-        await salesInvoiceApi.create(invoiceData);
-        setSuccessMessage("Sales invoice created successfully!");
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: editingInvoice
+            ? "edit_sales_invoice"
+            : "create_sales_invoice",
+          requestData: invoiceData,
+          entityId: editingInvoice?._id || null,
+        };
+
+        await requestApprovalApi.createRequest(requestData);
+        setSuccessMessage(
+          "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+        );
       }
 
-      await fetchAllData();
       resetForm();
       setEditingInvoice(null);
       setShowForm(false);

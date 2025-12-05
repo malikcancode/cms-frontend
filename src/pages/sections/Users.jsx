@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiEdit2, FiTrash2, FiUser, FiUserX } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { userApi } from "../../api/userApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function Users() {
+  const { user } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,7 +31,8 @@ export default function Users() {
       chartOfAccounts: false,
       salesInvoice: false,
       purchaseEntry: false,
-      cashBankPayment: false,
+      cashPayment: false,
+      bankPayment: false,
       reports: false,
     },
   });
@@ -78,7 +82,8 @@ export default function Users() {
     { key: "chartOfAccounts", label: "Chart of Accounts" },
     { key: "salesInvoice", label: "Sales Invoice" },
     { key: "purchaseEntry", label: "Purchase Entry" },
-    { key: "cashBankPayment", label: "Cash/Bank Payment" },
+    { key: "cashPayment", label: "Cash Payment" },
+    { key: "bankPayment", label: "Bank Payment" },
     { key: "reports", label: "Reports" },
   ];
 
@@ -101,23 +106,48 @@ export default function Users() {
         userData.password = formData.password;
       }
 
-      if (editingUser) {
-        // Update existing user
-        const response = await userApi.update(editingUser._id, userData);
-        if (response.success) {
-          await fetchUsers(); // Refresh the list
-          resetForm();
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        if (editingUser) {
+          // Update existing user
+          const response = await userApi.update(editingUser._id, userData);
+          if (response.success) {
+            await fetchUsers(); // Refresh the list
+            resetForm();
+          }
+        } else {
+          // Create new user - password is required
+          if (!formData.password) {
+            setError("Password is required for new users");
+            setSubmitting(false);
+            return;
+          }
+          const response = await userApi.create(userData);
+          if (response.success) {
+            await fetchUsers(); // Refresh the list
+            resetForm();
+          }
         }
       } else {
-        // Create new user - password is required
-        if (!formData.password) {
+        // Non-admin users must submit a request
+        // For new users, password is still required
+        if (!editingUser && !formData.password) {
           setError("Password is required for new users");
           setSubmitting(false);
           return;
         }
-        const response = await userApi.create(userData);
+
+        const requestData = {
+          requestType: editingUser ? "edit_user" : "create_user",
+          requestData: userData,
+          entityId: editingUser?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
         if (response.success) {
-          await fetchUsers(); // Refresh the list
+          alert(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
           resetForm();
         }
       }
@@ -146,7 +176,8 @@ export default function Users() {
         chartOfAccounts: false,
         salesInvoice: false,
         purchaseEntry: false,
-        cashBankPayment: false,
+        cashPayment: false,
+        bankPayment: false,
         reports: false,
       },
     });
@@ -195,7 +226,8 @@ export default function Users() {
         chartOfAccounts: false,
         salesInvoice: false,
         purchaseEntry: false,
-        cashBankPayment: false,
+        cashPayment: false,
+        bankPayment: false,
         reports: false,
       },
     });

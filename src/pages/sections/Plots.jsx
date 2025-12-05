@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   getAllPlots,
   createPlot,
@@ -11,11 +11,14 @@ import {
 } from "../../api/plotApi";
 import { projectApi } from "../../api/projectApi";
 import { customerApi } from "../../api/customerApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Modal from "../../components/Modal";
 import { FiEdit2, FiTrash2, FiPlus, FiFilter } from "react-icons/fi";
 import Loader from "./Loader";
 
 export default function Plots() {
+  const { user } = useContext(AuthContext);
   const [plots, setPlots] = useState([]);
   const [projects, setProjects] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -257,19 +260,38 @@ export default function Plots() {
         possessionDate: formData.possessionDate || undefined,
       };
 
-      let response;
-      if (modalMode === "create") {
-        response = await createPlot(plotData);
-        setSuccess("Plot created successfully");
-      } else {
-        response = await updatePlot(selectedPlot._id, plotData);
-        setSuccess("Plot updated successfully");
-      }
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        let response;
+        if (modalMode === "create") {
+          response = await createPlot(plotData);
+          setSuccess("Plot created successfully");
+        } else {
+          response = await updatePlot(selectedPlot._id, plotData);
+          setSuccess("Plot updated successfully");
+        }
 
-      if (response.success) {
-        await fetchInitialData();
-        handleCloseModal();
-        setTimeout(() => setSuccess(""), 3000);
+        if (response.success) {
+          await fetchInitialData();
+          handleCloseModal();
+          setTimeout(() => setSuccess(""), 3000);
+        }
+      } else {
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: modalMode === "create" ? "create_plot" : "edit_plot",
+          requestData: plotData,
+          entityId: selectedPlot?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
+        if (response.success) {
+          setSuccess(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
+          handleCloseModal();
+          setTimeout(() => setSuccess(""), 3000);
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || "Operation failed");

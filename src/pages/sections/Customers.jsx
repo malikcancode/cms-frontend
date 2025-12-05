@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { customerApi } from "../../api/customerApi";
+import { requestApprovalApi } from "../../api/requestApprovalApi";
+import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function Customers() {
+  const { user } = useContext(AuthContext);
   const [customers, setCustomers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
@@ -46,15 +49,47 @@ export default function Customers() {
       setLoading(true);
       setError("");
 
-      const response = editingCustomer
-        ? await customerApi.update(editingCustomer._id, formData)
-        : await customerApi.create(formData);
+      // Check if user is admin - admins can create/edit directly
+      if (user?.role === "admin") {
+        const response = editingCustomer
+          ? await customerApi.update(editingCustomer._id, formData)
+          : await customerApi.create(formData);
 
-      if (response.success) {
-        await fetchCustomers();
-        setFormData({ code: "", name: "", email: "", phone: "", address: "" });
-        setShowForm(false);
-        setEditingCustomer(null);
+        if (response.success) {
+          await fetchCustomers();
+          setFormData({
+            code: "",
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+          });
+          setShowForm(false);
+          setEditingCustomer(null);
+        }
+      } else {
+        // Non-admin users must submit a request
+        const requestData = {
+          requestType: editingCustomer ? "edit_customer" : "create_customer",
+          requestData: formData,
+          entityId: editingCustomer?._id || null,
+        };
+
+        const response = await requestApprovalApi.createRequest(requestData);
+        if (response.success) {
+          alert(
+            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+          );
+          setFormData({
+            code: "",
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+          });
+          setShowForm(false);
+          setEditingCustomer(null);
+        }
       }
     } catch (error) {
       console.error("Error saving customer:", error);
