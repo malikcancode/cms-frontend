@@ -55,7 +55,9 @@ export default function LoginPage() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-lg mb-4">
               <FiLock className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground">CMS</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              YM CONSTRUCTIONS
+            </h1>
             <p className="text-muted-foreground text-sm mt-2">
               Construction Management System
             </p>
