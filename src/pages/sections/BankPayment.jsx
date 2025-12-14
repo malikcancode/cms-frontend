@@ -606,16 +606,18 @@ export default function BankPayment() {
               readOnly
             />
 
-            <div className="flex items-center gap-2 border px-4 py-2 rounded-lg">
-              <input
-                type="checkbox"
-                checked={formData.cancel}
-                onChange={(e) =>
-                  setFormData({ ...formData, cancel: e.target.checked })
-                }
-              />
-              <span>Cancel</span>
-            </div>
+            {editingPayment && (
+              <div className="flex items-center gap-2 border px-4 py-2 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={formData.cancel}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cancel: e.target.checked })
+                  }
+                />
+                <span>Cancel</span>
+              </div>
+            )}
 
             <input
               type="date"

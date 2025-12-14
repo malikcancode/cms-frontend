@@ -388,9 +388,9 @@ export default function ItemList() {
                 <th className="px-6 py-3 text-left text-sm font-semibold">
                   Unit
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
+                {/* <th className="px-6 py-3 text-left text-sm font-semibold">
                   Category
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left text-sm font-semibold">
                   Actions
                 </th>
@@ -401,7 +401,7 @@ export default function ItemList() {
               {items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="3"
                     className="px-6 py-8 text-center text-muted-foreground"
                   >
                     No items found. Click "Add Item" to create your first item.
@@ -412,7 +412,7 @@ export default function ItemList() {
                   <tr key={item._id} className="hover:bg-muted/50 transition">
                     <td className="px-6 py-4">{item.name}</td>
                     <td className="px-6 py-4">{item.measurement}</td>
-                    <td className="px-6 py-4">{item.categoryName}</td>
+                    {/* <td className="px-6 py-4">{item.categoryName}</td> */}
 
                     <td className="px-6 py-4 flex gap-2">
                       <button

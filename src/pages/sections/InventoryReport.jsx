@@ -191,9 +191,9 @@ export default function InventoryReport() {
                     <td className="px-6 py-4 text-sm text-right font-semibold text-foreground">
                       Rs. {item.stockValue.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-2 py-4 text-sm">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`px-2 py-1 rounded-full text-[10px] font-medium whitespace-nowrap ${
                           item.status === "In Stock"
                             ? "bg-green-100 text-green-800"
                             : item.status === "Low Stock"

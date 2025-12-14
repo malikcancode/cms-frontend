@@ -30,8 +30,8 @@ export default function SalesInvoice() {
   const [formData, setFormData] = useState({
     // Header Fields
     date: "",
-    purchaseOrderNo: "",
-    deliveryChallanNo: "",
+    // purchaseOrderNo: "",
+    // deliveryChallanNo: "",
     termsOfPayment: "Cash",
     incomeAccount: "",
 
@@ -398,8 +398,8 @@ export default function SalesInvoice() {
   const resetForm = () => {
     setFormData({
       date: getTodayDate(),
-      purchaseOrderNo: "",
-      deliveryChallanNo: "",
+      // purchaseOrderNo: "",
+      // deliveryChallanNo: "",
       termsOfPayment: "Cash",
       incomeAccount: "",
       customer: "",
@@ -450,8 +450,8 @@ export default function SalesInvoice() {
       date: invoice.date
         ? new Date(invoice.date).toISOString().split("T")[0]
         : getTodayDate(),
-      purchaseOrderNo: invoice.purchaseOrderNo || "",
-      deliveryChallanNo: invoice.deliveryChallanNo || "",
+      // purchaseOrderNo: invoice.purchaseOrderNo || "",
+      // deliveryChallanNo: invoice.deliveryChallanNo || "",
       termsOfPayment: invoice.termsOfPayment || "Cash",
       incomeAccount: invoice.incomeAccount || "",
       customer: invoice.customer?._id || "",
@@ -1039,7 +1039,7 @@ export default function SalesInvoice() {
                   required
                 />
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
                   Purchase Order No.
                 </label>
@@ -1055,8 +1055,8 @@ export default function SalesInvoice() {
                   }
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
                   Delivery Challan No.
                 </label>
@@ -1072,7 +1072,7 @@ export default function SalesInvoice() {
                   }
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
                   Terms of Payment *

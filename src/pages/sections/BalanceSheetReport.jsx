@@ -28,6 +28,181 @@ export default function BalanceSheet() {
     }
   };
 
+  const handleDownloadPDF = () => {
+    if (!balanceSheet) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Balance Sheet - ${new Date(
+            asOfDate
+          ).toLocaleDateString()}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            .header h1 { color: #333; margin-bottom: 10px; }
+            .header p { color: #666; }
+            .date-section { text-align: center; margin-bottom: 20px; font-size: 14px; color: #555; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+            .section { margin-bottom: 30px; }
+            .section-title { font-size: 18px; font-weight: bold; color: #333; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 16px; }
+            .account-row { display: flex; justify-content: space-between; padding: 8px 4px; border-bottom: 1px solid #eee; }
+            .account-name { font-size: 13px; }
+            .account-code { font-size: 11px; color: #666; }
+            .account-amount { font-size: 13px; font-weight: 600; text-align: right; }
+            .total-row { display: flex; justify-content: space-between; padding: 12px 4px; font-weight: bold; border-top: 2px solid #333; margin-top: 16px; font-size: 16px; }
+            .subtotal-row { display: flex; justify-content: space-between; padding: 10px 4px; font-weight: 600; border-top: 1px solid #333; margin-top: 8px; }
+            .balance-status { margin-top: 30px; padding: 20px; border: 2px solid #ddd; border-radius: 8px; text-align: center; }
+            .balanced { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+            .not-balanced { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px; }
+            @media print { body { padding: 20px; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>BALANCE SHEET</h1>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+          <div class="date-section">
+            <strong>As of: ${new Date(asOfDate).toLocaleDateString()}</strong>
+          </div>
+          <div class="grid">
+            <div>
+              <div class="section">
+                <div class="section-title">ASSETS</div>
+                ${
+                  balanceSheet.assets?.accounts
+                    ?.map(
+                      (account) => `
+                  <div class="account-row">
+                    <div>
+                      <div class="account-name">${account.accountName}</div>
+                      <div class="account-code">${account.accountCode}</div>
+                    </div>
+                    <div class="account-amount">Rs. ${account.balance?.toLocaleString(
+                      undefined,
+                      { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                    )}</div>
+                  </div>
+                `
+                    )
+                    .join("") ||
+                  '<p style="color: #999; padding: 16px 0;">No assets found</p>'
+                }
+                <div class="total-row">
+                  <span>Total Assets</span>
+                  <span>Rs. ${balanceSheet.assets?.total?.toLocaleString(
+                    undefined,
+                    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                  )}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="section">
+                <div class="section-title">LIABILITIES</div>
+                ${
+                  balanceSheet.liabilities?.accounts
+                    ?.map(
+                      (account) => `
+                  <div class="account-row">
+                    <div>
+                      <div class="account-name">${account.accountName}</div>
+                      <div class="account-code">${account.accountCode}</div>
+                    </div>
+                    <div class="account-amount">Rs. ${account.balance?.toLocaleString(
+                      undefined,
+                      { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                    )}</div>
+                  </div>
+                `
+                    )
+                    .join("") ||
+                  '<p style="color: #999; padding: 16px 0;">No liabilities found</p>'
+                }
+                <div class="subtotal-row">
+                  <span>Total Liabilities</span>
+                  <span>Rs. ${balanceSheet.liabilities?.total?.toLocaleString(
+                    undefined,
+                    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                  )}</span>
+                </div>
+              </div>
+              <div class="section" style="margin-top: 30px;">
+                <div class="section-title">EQUITY</div>
+                ${
+                  balanceSheet.equity?.accounts
+                    ?.map(
+                      (account) => `
+                  <div class="account-row">
+                    <div>
+                      <div class="account-name">${account.accountName}</div>
+                      <div class="account-code">${account.accountCode}</div>
+                    </div>
+                    <div class="account-amount">Rs. ${account.balance?.toLocaleString(
+                      undefined,
+                      { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                    )}</div>
+                  </div>
+                `
+                    )
+                    .join("") ||
+                  '<p style="color: #999; padding: 16px 0;">No equity found</p>'
+                }
+                <div class="subtotal-row">
+                  <span>Total Equity</span>
+                  <span>Rs. ${balanceSheet.equity?.total?.toLocaleString(
+                    undefined,
+                    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                  )}</span>
+                </div>
+                <div class="total-row">
+                  <span>Total Liabilities & Equity</span>
+                  <span>Rs. ${balanceSheet.totalLiabilitiesAndEquity?.toLocaleString(
+                    undefined,
+                    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                  )}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="balance-status ${
+            balanceSheet.isBalanced ? "balanced" : "not-balanced"
+          }">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+              ${balanceSheet.isBalanced ? "✓ BALANCED" : "✗ NOT BALANCED"}
+            </div>
+            ${
+              !balanceSheet.isBalanced
+                ? `<div style="font-size: 14px;">Difference: Rs. ${Math.abs(
+                    balanceSheet.assets?.total -
+                      balanceSheet.totalLiabilitiesAndEquity
+                  ).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}</div>`
+                : ""
+            }
+          </div>
+          <div class="footer">
+            <p>Generated on ${new Date().toLocaleString()}</p>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+          <script>
+            window.onload = function() { window.print(); };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -40,7 +215,10 @@ export default function BalanceSheet() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-foreground">Balance Sheet</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90">
+        <button
+          onClick={handleDownloadPDF}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90"
+        >
           <FiDownload /> Export PDF
         </button>
       </div>

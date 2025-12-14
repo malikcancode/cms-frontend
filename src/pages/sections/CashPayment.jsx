@@ -163,6 +163,10 @@ export default function CashPayment() {
 
       const paymentData = {
         ...formData,
+        // Remove employeeRef if it's empty to avoid ObjectId cast error
+        employeeRef: formData.employeeRef || undefined,
+        // Remove project if it's empty
+        project: formData.project || undefined,
         paymentLines: paymentLines.map((line) => ({
           ...line,
           amount: parseFloat(line.amount),

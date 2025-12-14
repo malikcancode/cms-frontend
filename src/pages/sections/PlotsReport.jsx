@@ -103,51 +103,146 @@ export default function PlotsReport() {
     setTimeout(() => fetchReport(), 100);
   };
 
-  const exportToCSV = () => {
-    if (!reportData || reportData.length === 0) return;
+  const exportToPDF = () => {
+    if (!reportData || reportData.length === 0) {
+      alert("No data to export");
+      return;
+    }
 
-    const headers = [
-      "Project Name",
-      "Client",
-      "Job No",
-      "Status",
-      "Start Date",
-      "Completion Date",
-      "Estimated Cost",
-      "Value of Job",
-      "Job Incharge",
-      "Job Completed",
-    ];
+    // Calculate totals
+    const totalEstimatedCost = reportData.reduce(
+      (sum, project) => sum + (project.estimatedCost || 0),
+      0
+    );
+    const totalValueOfProject = reportData.reduce(
+      (sum, project) => sum + (project.valueOfJob || 0),
+      0
+    );
 
-    const rows = reportData.map((project) => [
-      project.name || "",
-      project.client || "",
-      project.jobNo || "",
-      project.status || "",
-      project.startDate ? new Date(project.startDate).toLocaleDateString() : "",
-      project.completionDate
-        ? new Date(project.completionDate).toLocaleDateString()
-        : "",
-      project.estimatedCost || 0,
-      project.valueOfJob || 0,
-      project.jobIncharge || "",
-      project.jobCompleted ? "Yes" : "No",
-    ]);
+    // Build filter description
+    let filterDesc = "";
+    if (filters.status) filterDesc += `Status: ${filters.status}`;
+    if (filters.startDate)
+      filterDesc += ` | From: ${new Date(
+        filters.startDate
+      ).toLocaleDateString()}`;
+    if (filters.endDate)
+      filterDesc += ` | To: ${new Date(filters.endDate).toLocaleDateString()}`;
+    if (!filterDesc) filterDesc = "All Projects";
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.join(",")),
-    ].join("\n");
+    const printWindow = window.open("", "", "width=800,height=600");
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Project Reports</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+            .header h1 { font-size: 24px; margin-bottom: 5px; }
+            .header h2 { font-size: 18px; margin-bottom: 10px; color: #333; }
+            .header .filters { font-size: 12px; color: #666; margin-top: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+            th, td { border: 1px solid #000; padding: 6px; text-align: left; }
+            th { background-color: #f0f0f0; font-weight: bold; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .totals { background-color: #f9f9f9; font-weight: bold; }
+            .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; }
+            .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 30px; }
+            .signature-box { text-align: center; }
+            .signature-line { border-top: 1px solid #000; margin-top: 50px; padding-top: 5px; font-size: 12px; }
+            @media print {
+              body { padding: 10px; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>YM CONSTRUCTIONS</h1>
+            <h2>Project Reports</h2>
+            <div class="filters">${filterDesc}</div>
+            <div class="filters">Generated on: ${new Date().toLocaleString()}</div>
+          </div>
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `project-reports-${
-      new Date().toISOString().split("T")[0]
-    }.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+          <table>
+            <thead>
+              <tr>
+                <th>Project Name</th>
+                <th>Client</th>
+                <th>Project No</th>
+                <th class="text-center">Status</th>
+                <th>Start Date</th>
+                <th>Completion</th>
+                <th class="text-right">Estimated Cost</th>
+                <th class="text-right">Project Value</th>
+                <th>Project Incharge</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${reportData
+                .map(
+                  (project) => `
+                <tr>
+                  <td>${project.name || "-"}</td>
+                  <td>${project.client || "-"}</td>
+                  <td>${project.jobNo || "-"}</td>
+                  <td class="text-center">${project.status || "-"}</td>
+                  <td>${
+                    project.startDate
+                      ? new Date(project.startDate).toLocaleDateString()
+                      : "-"
+                  }</td>
+                  <td>${
+                    project.completionDate
+                      ? new Date(project.completionDate).toLocaleDateString()
+                      : "-"
+                  }</td>
+                  <td class="text-right">Rs. ${(
+                    project.estimatedCost || 0
+                  ).toLocaleString()}</td>
+                  <td class="text-right">Rs. ${(
+                    project.valueOfJob || 0
+                  ).toLocaleString()}</td>
+                  <td>${project.jobIncharge || "-"}</td>
+                </tr>
+              `
+                )
+                .join("")}
+              <tr class="totals">
+                <td colspan="6" class="text-right">Total:</td>
+                <td class="text-right">Rs. ${totalEstimatedCost.toLocaleString()}</td>
+                <td class="text-right">Rs. ${totalValueOfProject.toLocaleString()}</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="signature-section">
+              <div class="signature-box">
+                <div class="signature-line">Prepared by</div>
+              </div>
+              <div class="signature-box">
+                <div class="signature-line">Reviewed by</div>
+              </div>
+              <div class="signature-box">
+                <div class="signature-line">Approved by</div>
+              </div>
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
 
     setSuccess("Report exported successfully");
     setTimeout(() => setSuccess(""), 3000);
@@ -184,12 +279,12 @@ export default function PlotsReport() {
           </p>
         </div>
         <button
-          onClick={exportToCSV}
+          onClick={exportToPDF}
           disabled={!reportData || reportData.length === 0}
           className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FiDownload className="w-5 h-5" />
-          Export CSV
+          Export PDF
         </button>
       </div>
 
@@ -370,7 +465,7 @@ export default function PlotsReport() {
                         Client
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                        Job No
+                        Project No
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
                         Status
@@ -385,10 +480,10 @@ export default function PlotsReport() {
                         Estimated Cost
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                        Job Value
+                        Project Value
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                        Incharge
+                        Project Incharge
                       </th>
                     </tr>
                   </thead>

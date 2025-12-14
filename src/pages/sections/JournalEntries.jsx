@@ -509,7 +509,7 @@ export default function JournalEntries() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-foreground">Journal Entries</h1>
-        <button
+        {/* <button
           onClick={() => {
             resetForm();
             setShowModal(true);
@@ -517,7 +517,7 @@ export default function JournalEntries() {
           className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90"
         >
           <FiPlus /> New Journal Entry
-        </button>
+        </button> */}
       </div>
 
       {error && (
@@ -540,7 +540,7 @@ export default function JournalEntries() {
             onChange={(e) =>
               setFilters({ ...filters, startDate: e.target.value })
             }
-            className="px-3 py-2 border border-border rounded-lg"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
             placeholder="Start Date"
           />
           <input
@@ -549,7 +549,7 @@ export default function JournalEntries() {
             onChange={(e) =>
               setFilters({ ...filters, endDate: e.target.value })
             }
-            className="px-3 py-2 border border-border rounded-lg"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
             placeholder="End Date"
           />
           <select
@@ -557,7 +557,7 @@ export default function JournalEntries() {
             onChange={(e) =>
               setFilters({ ...filters, transactionType: e.target.value })
             }
-            className="px-3 py-2 border border-border rounded-lg"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
           >
             <option value="">All Types</option>
             <option value="Sale">Sale</option>
@@ -569,12 +569,12 @@ export default function JournalEntries() {
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="px-3 py-2 border border-border rounded-lg"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
           >
             <option value="">All Status</option>
             <option value="Draft">Draft</option>
             <option value="Posted">Posted</option>
-            <option value="Reversed">Reversed</option>
+            {/* <option value="Reversed">Reversed</option> */}
           </select>
         </div>
       </div>
@@ -685,7 +685,7 @@ export default function JournalEntries() {
                             </button>
                           </>
                         )}
-                        {entry.status === "Posted" && (
+                        {/* {entry.status === "Posted" && (
                           <button
                             onClick={() => handleReverse(entry._id)}
                             className="text-orange-600 hover:text-orange-800"
@@ -693,7 +693,7 @@ export default function JournalEntries() {
                           >
                             <FiRefreshCw size={18} />
                           </button>
-                        )}
+                        )} */}
                       </div>
                     </td>
                   </tr>
@@ -720,7 +720,7 @@ export default function JournalEntries() {
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-border rounded-lg"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
                 required
               />
             </div>
@@ -733,7 +733,7 @@ export default function JournalEntries() {
                 onChange={(e) =>
                   setFormData({ ...formData, transactionType: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-border rounded-lg"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
                 required
               >
                 <option value="Journal">Journal</option>
@@ -751,7 +751,7 @@ export default function JournalEntries() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border rounded-lg"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
               rows="2"
               required
             />
@@ -782,7 +782,7 @@ export default function JournalEntries() {
                         onChange={(e) =>
                           handleAccountChange(index, e.target.value)
                         }
-                        className="w-full px-2 py-1 border border-border rounded text-sm"
+                        className="w-full px-2 py-1 border border-border rounded text-sm bg-background text-foreground"
                         required
                       >
                         <option value="">Select Account</option>
@@ -801,7 +801,7 @@ export default function JournalEntries() {
                         onChange={(e) =>
                           handleLineChange(index, "debit", e.target.value)
                         }
-                        className="w-full px-2 py-1 border border-border rounded text-sm"
+                        className="w-full px-2 py-1 border border-border rounded text-sm bg-background text-foreground"
                         step="0.01"
                       />
                       <input
@@ -811,7 +811,7 @@ export default function JournalEntries() {
                         onChange={(e) =>
                           handleLineChange(index, "credit", e.target.value)
                         }
-                        className="w-full px-2 py-1 border border-border rounded text-sm"
+                        className="w-full px-2 py-1 border border-border rounded text-sm bg-background text-foreground"
                         step="0.01"
                       />
                       {formData.lines.length > 2 && (
@@ -832,7 +832,7 @@ export default function JournalEntries() {
                     onChange={(e) =>
                       handleLineChange(index, "description", e.target.value)
                     }
-                    className="w-full px-2 py-1 border border-border rounded text-sm"
+                    className="w-full px-2 py-1 border border-border rounded text-sm bg-background text-foreground"
                   />
                 </div>
               ))}
@@ -862,7 +862,7 @@ export default function JournalEntries() {
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border rounded-lg"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
               rows="2"
             />
           </div>

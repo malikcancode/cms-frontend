@@ -400,16 +400,12 @@ export default function ChartOfAccounts() {
                     required
                   >
                     <option value="">Select Financial Component</option>
-                    <option value="Operating Expenses">
-                      Operating Expenses
+                    <option value="salary">Salary</option>
+                    <option value="pay roll">Pay Roll</option>
+                    <option value="pr expenses">PR Expenses</option>
+                    <option value="miscellaneous expenses">
+                      Miscellaneous Expenses
                     </option>
-                    <option value="Operating Income">Operating Income</option>
-                    <option value="Direct Costs">Direct Costs</option>
-                    <option value="Assets">Assets</option>
-                    <option value="Liabilities">Liabilities</option>
-                    <option value="Equity">Equity</option>
-                    <option value="EXPENSE ACCOUNTS">EXPENSE ACCOUNTS</option>
-                    <option value="REVENUE ACCOUNTS">REVENUE ACCOUNTS</option>
                   </select>
                 </div>
 

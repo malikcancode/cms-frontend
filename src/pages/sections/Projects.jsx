@@ -468,25 +468,27 @@ export default function Projects() {
               />
             </div>
 
-            {/* Project Completed Checkbox */}
-            <div className="flex items-center pt-7">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.projectCompleted}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      projectCompleted: e.target.checked,
-                    })
-                  }
-                  className="w-4 h-4"
-                />
-                <span className="text-sm font-medium text-foreground">
-                  Project Completed
-                </span>
-              </label>
-            </div>
+            {/* Project Completed Checkbox - Only show when editing */}
+            {editingProject && (
+              <div className="flex items-center pt-7">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.projectCompleted}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        projectCompleted: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm font-medium text-foreground">
+                    Project Completed
+                  </span>
+                </label>
+              </div>
+            )}
 
             {/* Start Date */}
             <div>

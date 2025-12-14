@@ -28,6 +28,220 @@ export default function TrialBalance() {
     }
   };
 
+  const handleDownloadPDF = () => {
+    if (!trialBalance) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Trial Balance - ${new Date(
+            asOfDate
+          ).toLocaleDateString()}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              padding: 40px;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px solid #333;
+              padding-bottom: 20px;
+            }
+            .header h1 {
+              color: #333;
+              margin-bottom: 10px;
+            }
+            .header p {
+              color: #666;
+            }
+            .date-section {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 14px;
+              color: #555;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+            }
+            th {
+              background: #333;
+              color: white;
+              padding: 12px;
+              text-align: left;
+              font-size: 13px;
+            }
+            td {
+              padding: 10px;
+              border-bottom: 1px solid #ddd;
+              font-size: 12px;
+            }
+            .text-right {
+              text-align: right;
+            }
+            .text-center {
+              text-align: center;
+            }
+            .total-row {
+              font-weight: bold;
+              background: #f5f5f5;
+              font-size: 14px;
+              border-top: 2px solid #333;
+            }
+            .account-type {
+              display: inline-block;
+              padding: 4px 8px;
+              border-radius: 12px;
+              font-size: 11px;
+              background: #dbeafe;
+              color: #1e40af;
+            }
+            .balance-status {
+              margin-top: 30px;
+              padding: 20px;
+              border: 2px solid #ddd;
+              border-radius: 8px;
+              text-align: center;
+            }
+            .balanced {
+              background: #d4edda;
+              color: #155724;
+              border-color: #c3e6cb;
+            }
+            .not-balanced {
+              background: #f8d7da;
+              color: #721c24;
+              border-color: #f5c6cb;
+            }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              color: #666;
+              font-size: 12px;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
+            @media print {
+              body {
+                padding: 20px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>TRIAL BALANCE</h1>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+
+          <div class="date-section">
+            <strong>As of: ${new Date(asOfDate).toLocaleDateString()}</strong>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Account Code</th>
+                <th>Account Name</th>
+                <th class="text-center">Type</th>
+                <th class="text-right">Debit</th>
+                <th class="text-right">Credit</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${trialBalance.accounts
+                ?.map(
+                  (account) => `
+                <tr>
+                  <td>${account.accountCode}</td>
+                  <td>${account.accountName}</td>
+                  <td class="text-center">
+                    <span class="account-type">${account.accountType}</span>
+                  </td>
+                  <td class="text-right">${
+                    account.debit > 0
+                      ? "Rs. " +
+                        account.debit.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : "-"
+                  }</td>
+                  <td class="text-right">${
+                    account.credit > 0
+                      ? "Rs. " +
+                        account.credit.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : "-"
+                  }</td>
+                </tr>
+              `
+                )
+                .join("")}
+              <tr class="total-row">
+                <td colspan="3">TOTAL</td>
+                <td class="text-right">Rs. ${trialBalance.totalDebit?.toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                )}</td>
+                <td class="text-right">Rs. ${trialBalance.totalCredit?.toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                )}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="balance-status ${
+            trialBalance.isBalanced ? "balanced" : "not-balanced"
+          }">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+              ${trialBalance.isBalanced ? "✓ BALANCED" : "✗ NOT BALANCED"}
+            </div>
+            ${
+              !trialBalance.isBalanced
+                ? `<div style="font-size: 14px;">
+                Difference: Rs. ${Math.abs(
+                  trialBalance.totalDebit - trialBalance.totalCredit
+                ).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>`
+                : ""
+            }
+          </div>
+
+          <div class="footer">
+            <p>Generated on ${new Date().toLocaleString()}</p>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -40,7 +254,10 @@ export default function TrialBalance() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-foreground">Trial Balance</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90">
+        <button
+          onClick={handleDownloadPDF}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90"
+        >
           <FiDownload /> Export PDF
         </button>
       </div>
@@ -59,7 +276,7 @@ export default function TrialBalance() {
             type="date"
             value={asOfDate}
             onChange={(e) => setAsOfDate(e.target.value)}
-            className="px-3 py-2 border border-border rounded-lg"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
           />
         </div>
       </div>

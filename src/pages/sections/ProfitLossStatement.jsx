@@ -34,6 +34,180 @@ export default function ProfitLoss() {
     }
   };
 
+  const handleDownloadPDF = () => {
+    if (!profitLoss) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Profit & Loss Statement</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            .header h1 { color: #333; margin-bottom: 10px; }
+            .header p { color: #666; }
+            .date-section { text-align: center; margin-bottom: 20px; font-size: 14px; color: #555; }
+            .section { margin-bottom: 30px; }
+            .section-title { font-size: 18px; font-weight: bold; color: #333; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+            .account-row { display: flex; justify-content: space-between; padding: 8px 4px; border-bottom: 1px solid #eee; }
+            .account-name { font-size: 13px; }
+            .account-code { font-size: 11px; color: #666; }
+            .account-amount { font-size: 13px; font-weight: 600; text-align: right; }
+            .total-row { display: flex; justify-content: space-between; padding: 12px 4px; font-weight: bold; border-top: 2px solid #333; margin-top: 16px; font-size: 16px; }
+            .net-profit { margin-top: 30px; padding: 20px; border: 2px solid #333; border-radius: 8px; background: #f5f5f5; }
+            .net-profit-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; }
+            .profit { color: #16a34a; }
+            .loss { color: #dc2626; }
+            .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
+            .summary-card { padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
+            .summary-label { font-size: 11px; color: #666; font-weight: 600; }
+            .summary-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
+            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px; }
+            @media print { body { padding: 20px; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>PROFIT & LOSS STATEMENT</h1>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+          <div class="date-section">
+            <strong>Period: ${new Date(
+              filters.startDate
+            ).toLocaleDateString()} to ${new Date(
+      filters.endDate
+    ).toLocaleDateString()}</strong>
+          </div>
+          <div class="section">
+            <div class="section-title">
+              <span>📈 REVENUE</span>
+            </div>
+            ${
+              profitLoss.revenue?.accounts
+                ?.map(
+                  (account) => `
+              <div class="account-row">
+                <div>
+                  <div class="account-name">${account.accountName}</div>
+                  <div class="account-code">${account.accountCode}</div>
+                </div>
+                <div class="account-amount" style="color: #16a34a;">Rs. ${account.amount?.toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                )}</div>
+              </div>
+            `
+                )
+                .join("") ||
+              '<p style="color: #999; padding: 16px 0;">No revenue accounts found</p>'
+            }
+            <div class="total-row">
+              <span>Total Revenue</span>
+              <span style="color: #16a34a;">Rs. ${profitLoss.revenue?.total?.toLocaleString(
+                undefined,
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}</span>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">
+              <span>📉 EXPENSES</span>
+            </div>
+            ${
+              profitLoss.expenses?.accounts
+                ?.map(
+                  (account) => `
+              <div class="account-row">
+                <div>
+                  <div class="account-name">${account.accountName}</div>
+                  <div class="account-code">${account.accountCode}</div>
+                </div>
+                <div class="account-amount" style="color: #dc2626;">Rs. ${account.amount?.toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                )}</div>
+              </div>
+            `
+                )
+                .join("") ||
+              '<p style="color: #999; padding: 16px 0;">No expense accounts found</p>'
+            }
+            <div class="total-row">
+              <span>Total Expenses</span>
+              <span style="color: #dc2626;">Rs. ${profitLoss.expenses?.total?.toLocaleString(
+                undefined,
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}</span>
+            </div>
+          </div>
+          <div class="net-profit">
+            <div class="net-profit-row">
+              <span>Net Profit / (Loss)</span>
+              <span class="${profitLoss.netProfit >= 0 ? "profit" : "loss"}">
+                ${profitLoss.netProfit >= 0 ? "+" : "-"} Rs. ${Math.abs(
+      profitLoss.netProfit
+    )?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}
+              </span>
+            </div>
+            <div style="margin-top: 12px; display: flex; justify-content: space-between; font-size: 13px;">
+              <span style="color: #666;">Net Profit Margin:</span>
+              <span style="font-weight: 600;">${profitLoss.netProfitMargin?.toFixed(
+                2
+              )}%</span>
+            </div>
+          </div>
+          <div class="summary-cards">
+            <div class="summary-card" style="background: #dcfce7; border-color: #86efac;">
+              <div class="summary-label" style="color: #166534;">Total Revenue</div>
+              <div class="summary-value" style="color: #15803d;">Rs. ${profitLoss.revenue?.total?.toLocaleString(
+                undefined,
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}</div>
+            </div>
+            <div class="summary-card" style="background: #fee2e2; border-color: #fca5a5;">
+              <div class="summary-label" style="color: #991b1b;">Total Expenses</div>
+              <div class="summary-value" style="color: #dc2626;">Rs. ${profitLoss.expenses?.total?.toLocaleString(
+                undefined,
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}</div>
+            </div>
+            <div class="summary-card" style="background: ${
+              profitLoss.netProfit >= 0 ? "#dbeafe" : "#fed7aa"
+            }; border-color: ${
+      profitLoss.netProfit >= 0 ? "#93c5fd" : "#fdba74"
+    };">
+              <div class="summary-label" style="color: ${
+                profitLoss.netProfit >= 0 ? "#1e40af" : "#c2410c"
+              };">Net ${profitLoss.netProfit >= 0 ? "Profit" : "Loss"}</div>
+              <div class="summary-value" style="color: ${
+                profitLoss.netProfit >= 0 ? "#1e3a8a" : "#ea580c"
+              };">Rs. ${Math.abs(profitLoss.netProfit)?.toLocaleString(
+      undefined,
+      { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+    )}</div>
+            </div>
+          </div>
+          <div class="footer">
+            <p>Generated on ${new Date().toLocaleString()}</p>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+          <script>
+            window.onload = function() { window.print(); };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -48,7 +222,10 @@ export default function ProfitLoss() {
         <h1 className="text-3xl font-bold text-foreground">
           Profit & Loss Statement
         </h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90">
+        <button
+          onClick={handleDownloadPDF}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90"
+        >
           <FiDownload /> Export PDF
         </button>
       </div>
@@ -72,7 +249,7 @@ export default function ProfitLoss() {
               onChange={(e) =>
                 setFilters({ ...filters, startDate: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border rounded-lg"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
             />
           </div>
           <div>
@@ -83,7 +260,7 @@ export default function ProfitLoss() {
               onChange={(e) =>
                 setFilters({ ...filters, endDate: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border rounded-lg"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
             />
           </div>
         </div>
