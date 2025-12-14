@@ -5,12 +5,7 @@ export const authApi = {
   // Login user
   login: async (email, password) => {
     try {
-      console.log(
-        "Making API request to:",
-        api.defaults.baseURL + "/auth/login"
-      );
       const response = await api.post("/auth/login", { email, password });
-      console.log("API response received:", response);
       return response.data;
     } catch (error) {
       console.error("API request failed:", error);

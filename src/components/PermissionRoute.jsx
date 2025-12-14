@@ -22,10 +22,8 @@ export const PermissionRoute = ({ permission, children }) => {
   const hasAccess = hasPermission(permission);
 
   if (permission && !hasAccess) {
-    console.log(`Access DENIED for permission: ${permission}`);
     return <Navigate to="/unauthorized" replace />;
   }
 
-  console.log(`Access GRANTED for permission: ${permission}`);
   return children || <Outlet />;
 };

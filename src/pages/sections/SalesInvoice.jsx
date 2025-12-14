@@ -683,6 +683,29 @@ export default function SalesInvoice() {
               background: #fed7aa;
               color: #9a3412;
             }
+            .signatures {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 40px;
+              margin-top: 60px;
+              margin-bottom: 30px;
+              padding: 0 20px;
+            }
+            .signature-box {
+              text-align: center;
+            }
+            .signature-line {
+              border-top: 1px solid #333;
+              margin-top: 60px;
+              padding-top: 8px;
+              font-weight: bold;
+              color: #333;
+            }
+            .signature-label {
+              font-size: 0.9em;
+              color: #666;
+              margin-top: 5px;
+            }
             @media print {
               body {
                 padding: 20px;
@@ -693,7 +716,7 @@ export default function SalesInvoice() {
         <body>
           <div class="header">
             <h1>SALES INVOICE</h1>
-            <p>Construction Management System</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
 
           <div class="invoice-info">
@@ -919,10 +942,25 @@ export default function SalesInvoice() {
             </div>
           </div>
 
+          <div class="signatures">
+            <div class="signature-box">
+              <div class="signature-line">Prepared by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+            <div class="signature-box">
+              <div class="signature-line">Received by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+            <div class="signature-box">
+              <div class="signature-line">Approved by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+          </div>
+
           <div class="footer">
             <p><strong>Thank you for your business!</strong></p>
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>Construction Management System</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
 
           <script>

@@ -60,7 +60,7 @@ export default function MainContent({ currentPage }) {
           {currentPage === "customer-ledger" && <CustomerLedger />}
           {currentPage === "supplier-ledger" && <SupplierLedger />}
           {currentPage === "inventory-report" && <InventoryReport />}
-          {currentPage === "plots-report" && <PlotsReport />}
+          {currentPage === "project-reports" && <PlotsReport />}
           {currentPage === "journal-entries" && <JournalEntries />}
           {currentPage === "general-ledger" && <GeneralLedger />}
           {currentPage === "trial-balance" && <TrialBalance />}

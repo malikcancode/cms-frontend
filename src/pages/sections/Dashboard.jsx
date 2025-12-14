@@ -29,7 +29,7 @@ import {
 export default function Dashboard() {
   const [stats, setStats] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]);
-  const [plotStats, setPlotStats] = useState(null);
+  // const [plotStats, setPlotStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedChart, setSelectedChart] = useState("expense-breakdown");
@@ -112,11 +112,11 @@ export default function Dashboard() {
       setError("");
 
       // Fetch stats, recent projects, and plot stats in parallel
-      const [statsResponse, projectsResponse, plotStatsResponse] =
+      const [statsResponse, projectsResponse /*, plotStatsResponse*/] =
         await Promise.all([
           dashboardApi.getStats(),
           dashboardApi.getRecentProjects(3),
-          dashboardApi.getPlotStats(),
+          // dashboardApi.getPlotStats(),
         ]);
 
       // Handle empty or missing data gracefully
@@ -173,7 +173,7 @@ export default function Dashboard() {
 
       setStats(formattedStats);
       setRecentProjects(projectsResponse?.data || []);
-      setPlotStats(plotStatsResponse?.data || null);
+      // setPlotStats(plotStatsResponse?.data || null);
     } catch (err) {
       console.error("Dashboard error:", err);
       // Set default values instead of showing error
@@ -217,7 +217,7 @@ export default function Dashboard() {
       ];
       setStats(defaultStats);
       setRecentProjects([]);
-      setPlotStats(null);
+      // setPlotStats(null);
       // Don't show error for empty data or common issues
     } finally {
       setLoading(false);
@@ -234,7 +234,12 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-stone-300 capitalize">
+          Welcome to YM constructions Management System
+        </p>
+      </div>
 
       {/* Error Message */}
       {error && (
@@ -317,7 +322,7 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Plot Statistics */}
+      {/* Plot Statistics - Commented out for now
       {plotStats && (
         <div className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-lg font-bold text-foreground mb-4">
@@ -371,6 +376,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+      */}
 
       {/* Analytics Charts Section */}
       <div className="bg-card border border-border rounded-lg p-6">

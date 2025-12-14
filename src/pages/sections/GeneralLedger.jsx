@@ -61,6 +61,150 @@ export default function GeneralLedger() {
     }
   };
 
+  const handleExportPDF = () => {
+    if (ledger.length === 0) {
+      alert("No data to export");
+      return;
+    }
+
+    // Calculate totals
+    const totalDebit = ledger.reduce(
+      (sum, entry) => sum + (entry.debit || 0),
+      0
+    );
+    const totalCredit = ledger.reduce(
+      (sum, entry) => sum + (entry.credit || 0),
+      0
+    );
+
+    // Build filter description
+    let filterDesc = "";
+    if (filters.accountCode) {
+      const account = accounts.find((acc) => acc.code === filters.accountCode);
+      filterDesc += `Account: ${
+        account ? `${account.code} - ${account.name}` : filters.accountCode
+      }`;
+    } else {
+      filterDesc += "All Accounts";
+    }
+    if (filters.startDate)
+      filterDesc += ` | From: ${new Date(
+        filters.startDate
+      ).toLocaleDateString()}`;
+    if (filters.endDate)
+      filterDesc += ` | To: ${new Date(filters.endDate).toLocaleDateString()}`;
+    if (filters.accountType) filterDesc += ` | Type: ${filters.accountType}`;
+
+    const printWindow = window.open("", "", "width=800,height=600");
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>General Ledger Report</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+            .header h1 { font-size: 24px; margin-bottom: 5px; }
+            .header h2 { font-size: 18px; margin-bottom: 10px; color: #333; }
+            .header .filters { font-size: 12px; color: #666; margin-top: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
+            th { background-color: #f0f0f0; font-weight: bold; }
+            .text-right { text-align: right; }
+            .totals { background-color: #f9f9f9; font-weight: bold; }
+            .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; }
+            .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 30px; }
+            .signature-box { text-align: center; }
+            .signature-line { border-top: 1px solid #000; margin-top: 50px; padding-top: 5px; font-size: 12px; }
+            @media print {
+              body { padding: 10px; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>YM CONSTRUCTIONS</h1>
+            <h2>General Ledger Report</h2>
+            <div class="filters">${filterDesc}</div>
+            <div class="filters">Generated on: ${new Date().toLocaleString()}</div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Entry No.</th>
+                <th>Account</th>
+                <th>Description</th>
+                <th class="text-right">Debit</th>
+                <th class="text-right">Credit</th>
+                <th class="text-right">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ledger
+                .map(
+                  (entry) => `
+                <tr>
+                  <td>${new Date(entry.date).toLocaleDateString()}</td>
+                  <td>${entry.entryNumber || "-"}</td>
+                  <td>${entry.accountCode} - ${entry.accountName}</td>
+                  <td>${entry.description || "-"}</td>
+                  <td class="text-right">${
+                    entry.debit > 0
+                      ? `Rs. ${entry.debit.toLocaleString()}`
+                      : "-"
+                  }</td>
+                  <td class="text-right">${
+                    entry.credit > 0
+                      ? `Rs. ${entry.credit.toLocaleString()}`
+                      : "-"
+                  }</td>
+                  <td class="text-right">Rs. ${(
+                    entry.runningBalance ||
+                    entry.balance ||
+                    0
+                  ).toLocaleString()}</td>
+                </tr>
+              `
+                )
+                .join("")}
+              <tr class="totals">
+                <td colspan="4" class="text-right">Total:</td>
+                <td class="text-right">Rs. ${totalDebit.toLocaleString()}</td>
+                <td class="text-right">Rs. ${totalCredit.toLocaleString()}</td>
+                <td class="text-right">-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="signature-section">
+              <div class="signature-box">
+                <div class="signature-line">Prepared by</div>
+              </div>
+              <div class="signature-box">
+                <div class="signature-line">Reviewed by</div>
+              </div>
+              <div class="signature-box">
+                <div class="signature-line">Approved by</div>
+              </div>
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   if (loading && !ledger.length) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -73,7 +217,10 @@ export default function GeneralLedger() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-foreground">General Ledger</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90">
+        <button
+          onClick={handleExportPDF}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90"
+        >
           <FiDownload /> Export
         </button>
       </div>

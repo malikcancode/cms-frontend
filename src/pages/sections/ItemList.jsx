@@ -206,6 +206,7 @@ export default function ItemList() {
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* ---------------------- PART 1: INVENTORY CATEGORY ---------------------- */}
+          {/* 
           <h2 className="text-lg font-semibold">Inventory Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
@@ -230,8 +231,10 @@ export default function ItemList() {
               required
             />
           </div>
+          */}
 
           {/* ------------------- PART 2: SUB INVENTORY CATEGORY ------------------- */}
+          {/* 
           <h2 className="text-lg font-semibold">Sub Inventory Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
@@ -254,6 +257,7 @@ export default function ItemList() {
               className="px-4 py-2 border border-border rounded-lg bg-background focus:ring-primary focus:ring-2"
             />
           </div>
+          */}
 
           {/* ---------------- PART 3: INVENTORY ITEM INFORMATION ---------------- */}
           <h2 className="text-lg font-semibold">Inventory Item Details</h2>

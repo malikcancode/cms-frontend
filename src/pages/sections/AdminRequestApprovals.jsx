@@ -490,12 +490,197 @@ export default function AdminRequestApprovals() {
 
             <div>
               <label className="block text-sm font-medium text-muted-foreground mb-2">
-                Project Data
+                Request Details
               </label>
-              <div className="bg-muted p-4 rounded border border-border max-h-96 overflow-y-auto">
-                <pre className="text-sm text-foreground whitespace-pre-wrap">
-                  {JSON.stringify(selectedRequest.requestData, null, 2)}
-                </pre>
+              <div className="bg-muted p-4 rounded border border-border space-y-4">
+                {/* Basic Information */}
+                {selectedRequest.requestData.date && (
+                  <div className="flex items-center gap-2">
+                    <FiCalendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Date:
+                    </span>
+                    <span className="text-sm text-foreground">
+                      {new Date(
+                        selectedRequest.requestData.date
+                      ).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+
+                {selectedRequest.requestData.project && (
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Project ID:
+                    </span>
+                    <span className="text-sm text-foreground ml-2">
+                      {selectedRequest.requestData.project}
+                    </span>
+                  </div>
+                )}
+
+                {selectedRequest.requestData.jobDescription && (
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Description:
+                    </span>
+                    <p className="text-sm text-foreground mt-1 bg-background p-2 rounded">
+                      {selectedRequest.requestData.jobDescription}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.requestData.remarks && (
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Remarks:
+                    </span>
+                    <p className="text-sm text-foreground mt-1 bg-background p-2 rounded">
+                      {selectedRequest.requestData.remarks}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.requestData.employeeRef && (
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Employee Reference:
+                    </span>
+                    <span className="text-sm text-foreground ml-2">
+                      {selectedRequest.requestData.employeeRef}
+                    </span>
+                  </div>
+                )}
+
+                {/* Payment Lines / Line Items */}
+                {selectedRequest.requestData.paymentLines &&
+                  selectedRequest.requestData.paymentLines.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-semibold text-foreground mb-2">
+                        Payment Lines
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedRequest.requestData.paymentLines.map(
+                          (line, index) => (
+                            <div
+                              key={index}
+                              className="bg-background p-3 rounded border border-border"
+                            >
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                {line.accountCode && (
+                                  <div>
+                                    <span className="font-medium text-muted-foreground">
+                                      Account Code:
+                                    </span>
+                                    <span className="text-foreground ml-2">
+                                      {line.accountCode}
+                                    </span>
+                                  </div>
+                                )}
+                                {line.accountName && (
+                                  <div>
+                                    <span className="font-medium text-muted-foreground">
+                                      Account Name:
+                                    </span>
+                                    <span className="text-foreground ml-2">
+                                      {line.accountName}
+                                    </span>
+                                  </div>
+                                )}
+                                {line.description && (
+                                  <div className="col-span-2">
+                                    <span className="font-medium text-muted-foreground">
+                                      Description:
+                                    </span>
+                                    <span className="text-foreground ml-2">
+                                      {line.description}
+                                    </span>
+                                  </div>
+                                )}
+                                {line.amount !== undefined && (
+                                  <div className="col-span-2">
+                                    <span className="font-medium text-muted-foreground">
+                                      Amount:
+                                    </span>
+                                    <span className="text-foreground ml-2 font-semibold">
+                                      Rs. {line.amount.toLocaleString()}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Display other fields dynamically */}
+                {Object.keys(selectedRequest.requestData).length > 0 && (
+                  <div className="mt-4">
+                    {Object.entries(selectedRequest.requestData).map(
+                      ([key, value]) => {
+                        // Skip already displayed fields
+                        if (
+                          [
+                            "date",
+                            "project",
+                            "jobDescription",
+                            "remarks",
+                            "employeeRef",
+                            "paymentLines",
+                          ].includes(key)
+                        ) {
+                          return null;
+                        }
+
+                        // Skip empty values
+                        if (
+                          value === "" ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          return null;
+                        }
+
+                        // Handle arrays
+                        if (Array.isArray(value) && value.length === 0) {
+                          return null;
+                        }
+
+                        // Handle objects (but not arrays or dates)
+                        if (
+                          typeof value === "object" &&
+                          value !== null &&
+                          !Array.isArray(value)
+                        ) {
+                          return (
+                            <div key={key} className="mb-2">
+                              <span className="text-sm font-medium text-muted-foreground capitalize">
+                                {key.replace(/([A-Z])/g, " $1").trim()}:
+                              </span>
+                              <pre className="text-xs text-foreground mt-1 bg-background p-2 rounded overflow-x-auto">
+                                {JSON.stringify(value, null, 2)}
+                              </pre>
+                            </div>
+                          );
+                        }
+
+                        // Handle primitive values
+                        return (
+                          <div key={key} className="mb-2">
+                            <span className="text-sm font-medium text-muted-foreground capitalize">
+                              {key.replace(/([A-Z])/g, " $1").trim()}:
+                            </span>
+                            <span className="text-sm text-foreground ml-2">
+                              {String(value)}
+                            </span>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

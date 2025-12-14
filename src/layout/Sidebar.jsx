@@ -28,7 +28,7 @@ const getMenuItems = (userRole) => [
     icon: FiSettings,
     submenu: [
       { label: "Projects", value: "projects" },
-      { label: "Plots", value: "plots" },
+      // { label: "Plots", value: "plots" },
       { label: "Chart of Accounts", value: "chart-of-accounts" },
       { label: "Chart of Inventory", value: "items" },
     ],
@@ -107,7 +107,7 @@ const getMenuItems = (userRole) => [
       { label: "Customer Ledger", value: "customer-ledger" },
       { label: "Vendor Ledger", value: "vendor-ledger" },
       { label: "Inventory Report", value: "inventory-report" },
-      { label: "Plots Report", value: "plots-report" },
+      { label: "Project Reports", value: "project-reports" },
     ],
   },
 ];
@@ -148,13 +148,13 @@ export default function Sidebar({ currentPage, onNavigate, isOpen }) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center text-sidebar-primary-foreground font-bold">
-                CM
+                YC
               </div>
               <div>
                 <h1 className="font-bold text-sidebar-foreground">
-                  ConstructMS
+                  YM CONSTRUCTIONS
                 </h1>
-                <p className="text-xs text-sidebar-foreground/60">Management</p>
+                {/* <p className="text-xs text-sidebar-foreground/60">Management</p> */}
               </div>
             </div>
             <button

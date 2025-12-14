@@ -6,6 +6,7 @@ import {
   FiRefreshCw,
   FiEye,
   FiFilter,
+  FiDownload,
 } from "react-icons/fi";
 import journalEntryApi from "../../api/journalEntryApi";
 import chartOfAccountApi from "../../api/chartOfAccountApi";
@@ -203,6 +204,269 @@ export default function JournalEntries() {
     }
   };
 
+  const handleDownloadPDF = (entry) => {
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Journal Entry - ${entry.entryNumber}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              padding: 40px;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px solid #333;
+              padding-bottom: 20px;
+            }
+            .header h1 {
+              color: #333;
+              margin-bottom: 10px;
+            }
+            .header p {
+              color: #666;
+            }
+            .info-section {
+              margin-bottom: 20px;
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 15px;
+            }
+            .info-item {
+              padding: 10px;
+              background: #f5f5f5;
+              border-radius: 5px;
+            }
+            .info-label {
+              font-weight: bold;
+              color: #555;
+              display: block;
+              margin-bottom: 5px;
+              font-size: 12px;
+            }
+            .info-value {
+              color: #333;
+              font-size: 14px;
+            }
+            .description {
+              margin: 20px 0;
+              padding: 15px;
+              background: #f9f9f9;
+              border-left: 4px solid #333;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+            }
+            th {
+              background: #333;
+              color: white;
+              padding: 12px;
+              text-align: left;
+              font-size: 13px;
+            }
+            td {
+              padding: 10px;
+              border-bottom: 1px solid #ddd;
+              font-size: 12px;
+            }
+            .text-right {
+              text-align: right;
+            }
+            .total-row {
+              font-weight: bold;
+              background: #f5f5f5;
+              font-size: 14px;
+            }
+            .status-badge {
+              display: inline-block;
+              padding: 5px 10px;
+              border-radius: 12px;
+              font-size: 11px;
+              font-weight: bold;
+            }
+            .status-posted {
+              background: #d4edda;
+              color: #155724;
+            }
+            .status-draft {
+              background: #fff3cd;
+              color: #856404;
+            }
+            .status-reversed {
+              background: #f8d7da;
+              color: #721c24;
+            }
+            .notes {
+              margin-top: 20px;
+              padding: 15px;
+              background: #f9f9f9;
+              border-radius: 5px;
+            }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              color: #666;
+              font-size: 12px;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
+            .signatures {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 40px;
+              margin-top: 60px;
+              margin-bottom: 30px;
+              padding: 0 20px;
+            }
+            .signature-box {
+              text-align: center;
+            }
+            .signature-line {
+              border-top: 1px solid #333;
+              margin-top: 60px;
+              padding-top: 8px;
+              font-weight: bold;
+              color: #333;
+            }
+            .signature-label {
+              font-size: 11px;
+              color: #666;
+              margin-top: 5px;
+            }
+            @media print {
+              body {
+                padding: 20px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>JOURNAL ENTRY</h1>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+
+          <div class="info-section">
+            <div class="info-item">
+              <span class="info-label">Entry Number</span>
+              <span class="info-value">${entry.entryNumber}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date</span>
+              <span class="info-value">${new Date(
+                entry.date
+              ).toLocaleDateString()}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Transaction Type</span>
+              <span class="info-value">${entry.transactionType}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="status-badge status-${entry.status.toLowerCase()}">${
+      entry.status
+    }</span>
+            </div>
+          </div>
+
+          <div class="description">
+            <span class="info-label">Description</span>
+            <p>${entry.description}</p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Account Code</th>
+                <th>Account Name</th>
+                <th>Description</th>
+                <th class="text-right">Debit</th>
+                <th class="text-right">Credit</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${entry.lines
+                .map(
+                  (line) => `
+                <tr>
+                  <td>${line.accountCode}</td>
+                  <td>${line.accountName}</td>
+                  <td>${line.description || "-"}</td>
+                  <td class="text-right">${
+                    line.debit > 0 ? "Rs. " + line.debit.toLocaleString() : "-"
+                  }</td>
+                  <td class="text-right">${
+                    line.credit > 0
+                      ? "Rs. " + line.credit.toLocaleString()
+                      : "-"
+                  }</td>
+                </tr>
+              `
+                )
+                .join("")}
+              <tr class="total-row">
+                <td colspan="3">TOTAL</td>
+                <td class="text-right">Rs. ${entry.totalDebit.toLocaleString()}</td>
+                <td class="text-right">Rs. ${entry.totalCredit.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          ${
+            entry.notes
+              ? `
+            <div class="notes">
+              <span class="info-label">Notes</span>
+              <p>${entry.notes}</p>
+            </div>
+          `
+              : ""
+          }
+
+          <div class="signatures">
+            <div class="signature-box">
+              <div class="signature-line">Prepared by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+            <div class="signature-box">
+              <div class="signature-line">Reviewed by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+            <div class="signature-box">
+              <div class="signature-line">Approved by</div>
+              <div class="signature-label">Name & Signature</div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Generated on ${new Date().toLocaleString()}</p>
+            <p>YM CONSTRUCTIONS</p>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
   const resetForm = () => {
     setFormData({
       date: new Date().toISOString().split("T")[0],
@@ -389,6 +653,13 @@ export default function JournalEntries() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handleDownloadPDF(entry)}
+                          className="text-purple-600 hover:text-purple-800"
+                          title="Download PDF"
+                        >
+                          <FiDownload size={18} />
+                        </button>
                         <button
                           onClick={() => handleView(entry)}
                           className="text-blue-600 hover:text-blue-800"

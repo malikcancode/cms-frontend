@@ -6,7 +6,6 @@ export const accountTypeApi = {
   getAll: async () => {
     try {
       const response = await api.get("/account-types");
-      console.log(response.data);
       return response.data;
     } catch (error) {
       throw (

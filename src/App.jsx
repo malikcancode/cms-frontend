@@ -396,7 +396,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="plots-report"
+                  path="project-reports"
                   element={
                     <PermissionRoute permission="reports">
                       <Suspense

@@ -24,18 +24,18 @@ export default function Projects() {
     address: "",
     code: "",
     contact: "",
-    jobNo: "",
-    jobDescription: "",
-    orderNo: "",
-    orderDate: "",
-    expiryDate: "",
-    deliveryDate: "",
-    valueOfJob: "",
-    jobCompleted: false,
+    projectNo: "",
+    projectDescription: "",
+    // orderNo: "",
+    // orderDate: "",
+    // expiryDate: "",
+    // deliveryDate: "",
+    valueOfProject: "",
+    projectCompleted: false,
     startDate: "",
     completionDate: "",
     estimatedCost: "",
-    jobIncharge: "",
+    projectIncharge: "",
   });
 
   // Fetch all projects and customers on component mount
@@ -154,22 +154,22 @@ export default function Projects() {
       address: project.address || "",
       code: project.code || "",
       contact: project.contact || "",
-      jobNo: project.jobNo || "",
-      jobDescription: project.jobDescription || "",
-      orderNo: project.orderNo || "",
-      orderDate: project.orderDate ? project.orderDate.split("T")[0] : "",
-      expiryDate: project.expiryDate ? project.expiryDate.split("T")[0] : "",
-      deliveryDate: project.deliveryDate
-        ? project.deliveryDate.split("T")[0]
-        : "",
-      valueOfJob: project.valueOfJob || "",
-      jobCompleted: project.jobCompleted || false,
+      projectNo: project.projectNo || project.jobNo || "",
+      projectDescription:
+        project.projectDescription || project.jobDescription || "",
+      // orderNo: project.orderNo || "",
+      // orderDate: project.orderDate ? project.orderDate.split("T")[0] : "",
+      // expiryDate: project.expiryDate ? project.expiryDate.split("T")[0] : "",
+      // deliveryDate: project.deliveryDate ? project.deliveryDate.split("T")[0] : "",
+      valueOfProject: project.valueOfProject || project.valueOfJob || "",
+      projectCompleted:
+        project.projectCompleted || project.jobCompleted || false,
       startDate: project.startDate ? project.startDate.split("T")[0] : "",
       completionDate: project.completionDate
         ? project.completionDate.split("T")[0]
         : "",
       estimatedCost: project.estimatedCost || "",
-      jobIncharge: project.jobIncharge || "",
+      projectIncharge: project.projectIncharge || project.jobIncharge || "",
     });
     setShowForm(true);
   };
@@ -200,18 +200,18 @@ export default function Projects() {
       address: "",
       code: "",
       contact: "",
-      jobNo: "",
-      jobDescription: "",
-      orderNo: "",
-      orderDate: "",
-      expiryDate: "",
-      deliveryDate: "",
-      valueOfJob: "",
-      jobCompleted: false,
+      projectNo: "",
+      projectDescription: "",
+      // orderNo: "",
+      // orderDate: "",
+      // expiryDate: "",
+      // deliveryDate: "",
+      valueOfProject: "",
+      projectCompleted: false,
       startDate: "",
       completionDate: "",
       estimatedCost: "",
-      jobIncharge: "",
+      projectIncharge: "",
     });
     setEditingProject(null);
     setShowForm(false);
@@ -348,39 +348,43 @@ export default function Projects() {
               />
             </div>
 
-            {/* Job No */}
+            {/* Project No */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Job No
+                Project No
               </label>
               <input
                 type="text"
-                placeholder="Job No"
-                value={formData.jobNo}
+                placeholder="Project No"
+                value={formData.projectNo}
                 onChange={(e) =>
-                  setFormData({ ...formData, jobNo: e.target.value })
+                  setFormData({ ...formData, projectNo: e.target.value })
                 }
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
 
-            {/* Job Description */}
+            {/* Project Description */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Job Description
+                Project Description
               </label>
               <input
                 type="text"
-                placeholder="Job Description"
-                value={formData.jobDescription}
+                placeholder="Project Description"
+                value={formData.projectDescription}
                 onChange={(e) =>
-                  setFormData({ ...formData, jobDescription: e.target.value })
+                  setFormData({
+                    ...formData,
+                    projectDescription: e.target.value,
+                  })
                 }
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
 
             {/* Order No */}
+            {/* 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
                 Order No
@@ -395,8 +399,10 @@ export default function Projects() {
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
+            */}
 
             {/* Order Date */}
+            {/* 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
                 Order Date
@@ -410,8 +416,10 @@ export default function Projects() {
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
+            */}
 
             {/* Expiry Date */}
+            {/* 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
                 Expiry Date
@@ -425,8 +433,10 @@ export default function Projects() {
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
+            */}
 
             {/* Delivery Date */}
+            {/* 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
                 Delivery Date
@@ -440,36 +450,40 @@ export default function Projects() {
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
+            */}
 
-            {/* Value of Job */}
+            {/* Value of Project */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Value of Job
+                Value of Project
               </label>
               <input
                 type="number"
-                placeholder="Value of Job"
-                value={formData.valueOfJob}
+                placeholder="Value of Project"
+                value={formData.valueOfProject}
                 onChange={(e) =>
-                  setFormData({ ...formData, valueOfJob: e.target.value })
+                  setFormData({ ...formData, valueOfProject: e.target.value })
                 }
                 className="w-full px-4 py-2 border rounded-lg"
               />
             </div>
 
-            {/* Job Completed Checkbox */}
+            {/* Project Completed Checkbox */}
             <div className="flex items-center pt-7">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={formData.jobCompleted}
+                  checked={formData.projectCompleted}
                   onChange={(e) =>
-                    setFormData({ ...formData, jobCompleted: e.target.checked })
+                    setFormData({
+                      ...formData,
+                      projectCompleted: e.target.checked,
+                    })
                   }
                   className="w-4 h-4"
                 />
                 <span className="text-sm font-medium text-foreground">
-                  Job Completed
+                  Project Completed
                 </span>
               </label>
             </div>
@@ -523,17 +537,17 @@ export default function Projects() {
               />
             </div>
 
-            {/* Job Incharge */}
+            {/* Project Incharge */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
-                Job Incharge <span className="text-red-500">*</span>
+                Project Incharge <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="Job Incharge"
-                value={formData.jobIncharge}
+                placeholder="Project Incharge"
+                value={formData.projectIncharge}
                 onChange={(e) =>
-                  setFormData({ ...formData, jobIncharge: e.target.value })
+                  setFormData({ ...formData, projectIncharge: e.target.value })
                 }
                 className="w-full px-4 py-2 border rounded-lg"
                 required
@@ -583,7 +597,7 @@ export default function Projects() {
                   Est. Cost
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                  Job Incharge
+                  Project Incharge
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                   Status
@@ -622,7 +636,7 @@ export default function Projects() {
                       Rs. {project.estimatedCost.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
-                      {project.jobIncharge}
+                      {project.projectIncharge || project.jobIncharge}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <span
