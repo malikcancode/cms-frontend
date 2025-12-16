@@ -716,7 +716,7 @@ export default function SalesInvoice() {
         <body>
           <div class="header">
             <h1>SALES INVOICE</h1>
-            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
 
           <div class="invoice-info">
@@ -960,7 +960,7 @@ export default function SalesInvoice() {
           <div class="footer">
             <p><strong>Thank you for your business!</strong></p>
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
 
           <script>

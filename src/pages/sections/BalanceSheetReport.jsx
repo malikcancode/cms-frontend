@@ -64,7 +64,7 @@ export default function BalanceSheet() {
         <body>
           <div class="header">
             <h1>BALANCE SHEET</h1>
-            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
           <div class="date-section">
             <strong>As of: ${new Date(asOfDate).toLocaleDateString()}</strong>
@@ -189,7 +189,7 @@ export default function BalanceSheet() {
           </div>
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
+            <p>YM CONSTRUCTIONS</p>
           </div>
           <script>
             window.onload = function() { window.print(); };

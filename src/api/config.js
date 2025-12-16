@@ -5,10 +5,10 @@ import axios from "axios";
 // ============================================
 
 // Production URL
-// const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
+const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
 
 // Local URL (uncomment for local development)
-const API_URL = "http://localhost:5000/api";
+// const API_URL = "http://localhost:5000/api";
 
 // ============================================
 

@@ -397,7 +397,7 @@ export default function CashPayment() {
 
           <div class="footer">
             <p>Printed on ${new Date().toLocaleString()}</p>
-            <p><strong>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</strong></p>
+            <p><strong>YM CONSTRUCTIONS</strong></p>
           </div>
 
           <div class="no-print" style="margin-top:16px;">

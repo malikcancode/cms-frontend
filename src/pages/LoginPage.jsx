@@ -56,7 +56,7 @@ export default function LoginPage() {
               <FiLock className="w-6 h-6 text-primary-foreground" />
             </div>
             <h1 className="text-3xl font-bold text-foreground">
-              BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD
+              YM CONSTRUCTIONS
             </h1>
             <p className="text-muted-foreground text-sm mt-2">
               Construction Management System
