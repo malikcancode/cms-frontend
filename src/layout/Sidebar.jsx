@@ -147,12 +147,12 @@ export default function Sidebar({ currentPage, onNavigate, isOpen }) {
         <div className="p-6 border-b border-sidebar-border shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center text-sidebar-primary-foreground font-bold">
-                YC
-              </div>
+              {/* <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center text-sidebar-primary-foreground font-bold">
+                BAMC
+              </div> */}
               <div>
                 <h1 className="font-bold text-sidebar-foreground">
-                  YM CONSTRUCTIONS
+                  BUNYAN AL MARSOOS Constructions PVT LTD
                 </h1>
                 {/* <p className="text-xs text-sidebar-foreground/60">Management</p> */}
               </div>

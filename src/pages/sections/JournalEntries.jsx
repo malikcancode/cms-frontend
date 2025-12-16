@@ -353,7 +353,7 @@ export default function JournalEntries() {
         <body>
           <div class="header">
             <h1>JOURNAL ENTRY</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <div class="info-section">
@@ -450,7 +450,7 @@ export default function JournalEntries() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <script>

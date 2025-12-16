@@ -140,7 +140,7 @@ export default function TrialBalance() {
         <body>
           <div class="header">
             <h1>TRIAL BALANCE</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <div class="date-section">
@@ -225,7 +225,7 @@ export default function TrialBalance() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <script>

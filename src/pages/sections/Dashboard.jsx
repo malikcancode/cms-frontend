@@ -237,7 +237,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
         <p className="text-stone-300 capitalize">
-          Welcome to YM constructions Management System
+          Welcome to BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD
         </p>
       </div>
 

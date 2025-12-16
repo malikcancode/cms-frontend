@@ -125,7 +125,7 @@ export default function GeneralLedger() {
         </head>
         <body>
           <div class="header">
-            <h1>YM CONSTRUCTIONS</h1>
+            <h1>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</h1>
             <h2>General Ledger Report</h2>
             <div class="filters">${filterDesc}</div>
             <div class="filters">Generated on: ${new Date().toLocaleString()}</div>

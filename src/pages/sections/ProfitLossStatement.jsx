@@ -71,7 +71,7 @@ export default function ProfitLoss() {
         <body>
           <div class="header">
             <h1>PROFIT & LOSS STATEMENT</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
           <div class="date-section">
             <strong>Period: ${new Date(
@@ -194,7 +194,7 @@ export default function ProfitLoss() {
           </div>
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
           <script>
             window.onload = function() { window.print(); };

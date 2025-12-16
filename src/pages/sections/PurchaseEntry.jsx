@@ -472,7 +472,7 @@ export default function PurchaseEntry() {
         <body>
           <div class="header">
             <h1>PURCHASE RECEIPT</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <div class="section">
@@ -607,7 +607,7 @@ export default function PurchaseEntry() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>BUNYAN AL MARSOOS CONSTRUCTIONS PVT LTD</p>
           </div>
 
           <script>
