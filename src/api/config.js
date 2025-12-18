@@ -12,7 +12,6 @@ const API_URL = "https://cms-backend-production-63bd.up.railway.app/api";
 
 // ============================================
 
-// Create axios instance with base configuration and security settings
 const api = axios.create({
   baseURL: API_URL,
   headers: {
