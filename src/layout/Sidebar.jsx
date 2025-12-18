@@ -113,7 +113,7 @@ const getMenuItems = (userRole) => [
 ];
 
 export default function Sidebar({ currentPage, onNavigate, isOpen }) {
-  const { user } = useContext(AuthContext);
+  const { user, tenant } = useContext(AuthContext);
   const [expandedMenus, setExpandedMenus] = useState({});
 
   // Get menu items based on user role
@@ -128,6 +128,17 @@ export default function Sidebar({ currentPage, onNavigate, isOpen }) {
 
   const handleNavigate = (value) => {
     onNavigate(value);
+  };
+
+  // Get dynamic tenant name and initials
+  const tenantName = tenant?.portalName || "Construction Management";
+  const getTenantInitials = () => {
+    return tenantName
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -148,11 +159,11 @@ export default function Sidebar({ currentPage, onNavigate, isOpen }) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center text-sidebar-primary-foreground font-bold">
-                YC
+                {getTenantInitials()}
               </div>
               <div>
-                <h1 className="font-bold text-sidebar-foreground">
-                  YM CONSTRUCTIONS
+                <h1 className="font-bold text-xs text-sidebar-foreground">
+                  {tenantName}
                 </h1>
                 {/* <p className="text-xs text-sidebar-foreground/60">Management</p> */}
               </div>

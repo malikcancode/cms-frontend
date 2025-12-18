@@ -13,7 +13,8 @@ import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function PurchaseEntry() {
-  const { user } = useContext(AuthContext);
+  const { user, tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [purchases, setPurchases] = useState([]);
   const [items, setItems] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -472,7 +473,7 @@ export default function PurchaseEntry() {
         <body>
           <div class="header">
             <h1>PURCHASE RECEIPT</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <div class="section">
@@ -607,7 +608,7 @@ export default function PurchaseEntry() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <script>

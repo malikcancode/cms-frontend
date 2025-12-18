@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   FiBarChart2,
   FiDollarSign,
@@ -9,6 +9,7 @@ import {
   FiTrendingDown,
   FiMinus,
 } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
 import dashboardApi from "../../api/dashboardApi";
 import Loader from "./Loader";
 import {
@@ -27,6 +28,8 @@ import {
 } from "../../components/charts/DashboardCharts";
 
 export default function Dashboard() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [stats, setStats] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]);
   // const [plotStats, setPlotStats] = useState(null);
@@ -236,9 +239,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-        <p className="text-stone-300 capitalize">
-          Welcome to YM constructions Management System
-        </p>
+        <p className="text-stone-300 capitalize">Welcome to {portalName}</p>
       </div>
 
       {/* Error Message */}

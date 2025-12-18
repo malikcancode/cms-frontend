@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { FiPlus, FiEdit2, FiTrash2, FiUser, FiUserX } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import { userApi } from "../../api/userApi";
+import { tenantApi } from "../../api/tenantApi";
 import { requestApprovalApi } from "../../api/requestApprovalApi";
 import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
@@ -21,6 +22,11 @@ export default function Users() {
     email: "",
     password: "",
     role: "operator",
+    portalName: "", // New field for admin portal name
+    phoneNumber: "",
+    address: "",
+    city: "",
+    country: "",
     customPermissions: {
       dashboard: false,
       projects: false,
@@ -93,62 +99,92 @@ export default function Users() {
     setError("");
 
     try {
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-        customPermissions:
-          formData.role === "custom" ? formData.customPermissions : null,
-      };
-
-      // Only include password if it's provided (for new users or when updating)
-      if (formData.password) {
-        userData.password = formData.password;
-      }
-
-      // Check if user is admin - admins can create/edit directly
-      if (user?.role === "admin") {
-        if (editingUser) {
-          // Update existing user
-          const response = await userApi.update(editingUser._id, userData);
-          if (response.success) {
-            await fetchUsers(); // Refresh the list
-            resetForm();
-          }
-        } else {
-          // Create new user - password is required
-          if (!formData.password) {
-            setError("Password is required for new users");
-            setSubmitting(false);
-            return;
-          }
-          const response = await userApi.create(userData);
-          if (response.success) {
-            await fetchUsers(); // Refresh the list
-            resetForm();
-          }
-        }
-      } else {
-        // Non-admin users must submit a request
-        // For new users, password is still required
-        if (!editingUser && !formData.password) {
-          setError("Password is required for new users");
+      if (formData.role === "admin" && !editingUser) {
+        // Creating a new admin with portal
+        if (!formData.portalName) {
+          setError("Portal name is required for Admin users");
           setSubmitting(false);
           return;
         }
 
-        const requestData = {
-          requestType: editingUser ? "edit_user" : "create_user",
-          requestData: userData,
-          entityId: editingUser?._id || null,
+        // Register tenant/portal first
+        const tenantResponse = await tenantApi.register({
+          portalName: formData.portalName,
+          email: formData.email,
+          password: formData.password,
+          adminName: formData.name,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+          city: formData.city,
+          country: formData.country,
+        });
+
+        if (tenantResponse.success) {
+          alert(
+            `Portal "${formData.portalName}" created successfully! Admin can now login.`
+          );
+          await fetchUsers();
+          resetForm();
+        }
+      } else {
+        // Creating operator or custom user OR editing existing user
+        const userData = {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          customPermissions:
+            formData.role === "custom" ? formData.customPermissions : null,
         };
 
-        const response = await requestApprovalApi.createRequest(requestData);
-        if (response.success) {
-          alert(
-            "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
-          );
-          resetForm();
+        // Only include password if it's provided (for new users or when updating)
+        if (formData.password) {
+          userData.password = formData.password;
+        }
+
+        // Check if user is admin - admins can create/edit directly
+        if (user?.role === "admin") {
+          if (editingUser) {
+            // Update existing user
+            const response = await userApi.update(editingUser._id, userData);
+            if (response.success) {
+              await fetchUsers(); // Refresh the list
+              resetForm();
+            }
+          } else {
+            // Create new user - password is required
+            if (!formData.password) {
+              setError("Password is required for new users");
+              setSubmitting(false);
+              return;
+            }
+            const response = await userApi.create(userData);
+            if (response.success) {
+              await fetchUsers(); // Refresh the list
+              resetForm();
+            }
+          }
+        } else {
+          // Non-admin users must submit a request
+          // For new users, password is still required
+          if (!editingUser && !formData.password) {
+            setError("Password is required for new users");
+            setSubmitting(false);
+            return;
+          }
+
+          const requestData = {
+            requestType: editingUser ? "edit_user" : "create_user",
+            requestData: userData,
+            entityId: editingUser?._id || null,
+          };
+
+          const response = await requestApprovalApi.createRequest(requestData);
+          if (response.success) {
+            alert(
+              "Your request has been submitted to the admin for approval. You can view the status in 'My Requests' section."
+            );
+            resetForm();
+          }
         }
       }
     } catch (err) {
@@ -166,6 +202,11 @@ export default function Users() {
       email: user.email,
       password: "",
       role: user.role,
+      portalName: "",
+      phoneNumber: "",
+      address: "",
+      city: "",
+      country: "",
       customPermissions: user.customPermissions || {
         dashboard: false,
         projects: false,
@@ -216,6 +257,11 @@ export default function Users() {
       email: "",
       password: "",
       role: "operator",
+      portalName: "",
+      phoneNumber: "",
+      address: "",
+      city: "",
+      country: "",
       customPermissions: {
         dashboard: false,
         projects: false,
@@ -394,6 +440,97 @@ export default function Users() {
             </div>
           </div>
 
+          {/* Portal Information Section - Only show when Admin is selected and not editing */}
+          {formData.role === "admin" && !editingUser && (
+            <div className="border border-border rounded-lg p-4 bg-muted/30">
+              <h3 className="text-sm font-semibold text-foreground mb-4">
+                Portal Registration Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Portal Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., BUNYAN AL MARSOOS CONSTRUCTIONS"
+                    value={formData.portalName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, portalName: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="Enter phone number"
+                    value={formData.phoneNumber}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phoneNumber: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter address"
+                    value={formData.address}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter city"
+                    value={formData.city}
+                    onChange={(e) =>
+                      setFormData({ ...formData, city: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter country"
+                  value={formData.country}
+                  onChange={(e) =>
+                    setFormData({ ...formData, country: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-3">
+                This admin will get access to their own portal with isolated
+                data.
+              </p>
+            </div>
+          )}
+
           {/* Custom Permissions Section */}
           {formData.role === "custom" && (
             <div className="border border-border rounded-lg p-4 bg-muted/30">
@@ -425,7 +562,17 @@ export default function Users() {
           )}
 
           {/* Role Information */}
-          {formData.role === "admin" && (
+          {formData.role === "admin" && !editingUser && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-sm text-red-800">
+                <strong>Admin Role:</strong> Full access to their own portal
+                with isolated data. Each admin manages their own company portal
+                independently.
+              </p>
+            </div>
+          )}
+
+          {formData.role === "admin" && editingUser && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-800">
                 <strong>Admin Role:</strong> Full access to all system features,

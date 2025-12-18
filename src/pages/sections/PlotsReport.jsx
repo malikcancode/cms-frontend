@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { reportApi } from "../../api/reportApi";
 import { projectApi } from "../../api/projectApi";
 import {
@@ -17,6 +18,8 @@ import {
 import Loader from "./Loader";
 
 export default function PlotsReport() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [reportData, setReportData] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -161,7 +164,7 @@ export default function PlotsReport() {
         </head>
         <body>
           <div class="header">
-            <h1>YM CONSTRUCTIONS</h1>
+            <h1>${portalName}</h1>
             <h2>Project Reports</h2>
             <div class="filters">${filterDesc}</div>
             <div class="filters">Generated on: ${new Date().toLocaleString()}</div>

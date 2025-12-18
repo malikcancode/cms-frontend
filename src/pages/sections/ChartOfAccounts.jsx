@@ -66,9 +66,11 @@ export default function ChartOfAccounts() {
   const fetchAccountTypes = async () => {
     try {
       const response = await accountTypeApi.getAll();
-      setAccountTypes(response.data);
+      console.log("Fetched account types:", response);
+      setAccountTypes(response.data || response);
     } catch (err) {
       console.error("Error fetching account types:", err);
+      setError(err.message || "Failed to fetch account types");
     }
   };
 
@@ -232,7 +234,9 @@ export default function ChartOfAccounts() {
 
     try {
       setLoading(true);
-      await accountTypeApi.create(accountTypeFormData);
+      const response = await accountTypeApi.create(accountTypeFormData);
+      console.log("Account type created:", response);
+
       setAccountTypeFormData({
         name: "",
         code: "",
@@ -240,10 +244,16 @@ export default function ChartOfAccounts() {
         description: "",
       });
       setShowAccountTypeForm(false);
+
+      // Refresh account types
       await fetchAccountTypes();
+
+      // Show success message
+      alert("Account type created successfully!");
     } catch (err) {
       console.error("Error creating account type:", err);
       setError(err.message || "Failed to create account type");
+      alert(err.message || "Failed to create account type");
     } finally {
       setLoading(false);
     }

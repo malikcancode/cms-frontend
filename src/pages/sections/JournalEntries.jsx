@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   FiPlus,
   FiEdit2,
@@ -8,12 +8,15 @@ import {
   FiFilter,
   FiDownload,
 } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
 import journalEntryApi from "../../api/journalEntryApi";
 import chartOfAccountApi from "../../api/chartOfAccountApi";
 import Modal from "../../components/Modal";
 import Loader from "./Loader";
 
 export default function JournalEntries() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [entries, setEntries] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -353,7 +356,7 @@ export default function JournalEntries() {
         <body>
           <div class="header">
             <h1>JOURNAL ENTRY</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <div class="info-section">
@@ -450,7 +453,7 @@ export default function JournalEntries() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <script>

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { authApi } from "../api/authApi";
+import { tenantApi } from "../api/tenantApi";
 
 const AuthContext = createContext(null);
 
@@ -11,8 +12,17 @@ const getInitialUser = () => {
   return null;
 };
 
+const getInitialTenant = () => {
+  if (typeof window !== "undefined") {
+    const storedTenant = localStorage.getItem("tenant");
+    return storedTenant ? JSON.parse(storedTenant) : null;
+  }
+  return null;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getInitialUser);
+  const [tenant, setTenant] = useState(getInitialTenant);
   const [loading, setLoading] = useState(true);
 
   // Check if user is authenticated on mount
@@ -30,7 +40,9 @@ export const AuthProvider = ({ children }) => {
           console.error("Failed to verify user:", error);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
+          localStorage.removeItem("tenant");
           setUser(null);
+          setTenant(null);
         }
       }
       setLoading(false);
@@ -39,14 +51,20 @@ export const AuthProvider = ({ children }) => {
     verifyUser();
   }, []);
 
-  const login = (userData, token) => {
+  const login = (userData, tenantData, token) => {
     setUser(userData);
+    setTenant(tenantData);
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("tenant", JSON.stringify(tenantData));
     localStorage.setItem("token", token);
   };
 
   const logout = () => {
     setUser(null);
+    setTenant(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("tenant");
+    localStorage.removeItem("token");
     authApi.logout();
   };
 
@@ -87,6 +105,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    tenant,
     login,
     logout,
     isAuthenticated,

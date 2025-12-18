@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiDownload } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
 import generalLedgerApi from "../../api/generalLedgerApi";
 import Loader from "./Loader";
 
 export default function TrialBalance() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [trialBalance, setTrialBalance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -140,7 +143,7 @@ export default function TrialBalance() {
         <body>
           <div class="header">
             <h1>TRIAL BALANCE</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <div class="date-section">
@@ -225,7 +228,7 @@ export default function TrialBalance() {
 
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <script>

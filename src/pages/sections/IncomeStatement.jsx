@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { reportApi } from "../../api/reportApi";
 import Loader from "./Loader";
 
 export default function IncomeStatement() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [statementData, setStatementData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -152,9 +155,7 @@ export default function IncomeStatement() {
       {/* Income Statement Details */}
       <div className="bg-card border border-border rounded-lg p-8">
         <div className="text-center mb-8 pb-6 border-b border-border">
-          <h2 className="text-2xl font-bold text-foreground">
-            Construction Management System
-          </h2>
+          <h2 className="text-2xl font-bold text-foreground">{portalName}</h2>
           <p className="text-sm text-muted-foreground mt-2">Income Statement</p>
           <p className="text-xs text-muted-foreground">
             Period: {period.startDate} to {period.endDate}

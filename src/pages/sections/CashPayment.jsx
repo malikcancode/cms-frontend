@@ -16,7 +16,8 @@ import { requestApprovalApi } from "../../api/requestApprovalApi";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function CashPayment() {
-  const { user } = useContext(AuthContext);
+  const { user, tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [payments, setPayments] = useState([]);
   const [projects, setProjects] = useState([]);
   const [expenseAccounts, setExpenseAccounts] = useState([]);
@@ -397,7 +398,7 @@ export default function CashPayment() {
 
           <div class="footer">
             <p>Printed on ${new Date().toLocaleString()}</p>
-            <p><strong>YM CONSTRUCTIONS</strong></p>
+            <p><strong>{portalName}</strong></p>
           </div>
 
           <div class="no-print" style="margin-top:16px;">

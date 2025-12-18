@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiFilter, FiDownload } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
 import generalLedgerApi from "../../api/generalLedgerApi";
 import chartOfAccountApi from "../../api/chartOfAccountApi";
 import Loader from "./Loader";
 
 export default function GeneralLedger() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [ledger, setLedger] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -125,7 +128,7 @@ export default function GeneralLedger() {
         </head>
         <body>
           <div class="header">
-            <h1>YM CONSTRUCTIONS</h1>
+            <h1>${portalName}</h1>
             <h2>General Ledger Report</h2>
             <div class="filters">${filterDesc}</div>
             <div class="filters">Generated on: ${new Date().toLocaleString()}</div>

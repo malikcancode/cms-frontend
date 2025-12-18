@@ -5,7 +5,10 @@ export const authApi = {
   // Login user
   login: async (email, password) => {
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
       return response.data;
     } catch (error) {
       console.error("API request failed:", error);
@@ -35,6 +38,7 @@ export const authApi = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("tenant");
   },
 };
 

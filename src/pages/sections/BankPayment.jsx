@@ -20,7 +20,8 @@ import { requestApprovalApi } from "../../api/requestApprovalApi";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function BankPayment() {
-  const { user } = useContext(AuthContext);
+  const { user, tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [payments, setPayments] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -403,7 +404,7 @@ export default function BankPayment() {
           }
           
           <div class="header">
-            <h1>CONSTRUCTION MANAGEMENT SYSTEM</h1>
+            <h1>{portalName}</h1>
             <h2>Bank Payment Voucher</h2>
           </div>
 

@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiDownload, FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
 import generalLedgerApi from "../../api/generalLedgerApi";
 import Loader from "./Loader";
 
 export default function ProfitLoss() {
+  const { tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [profitLoss, setProfitLoss] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -71,7 +74,7 @@ export default function ProfitLoss() {
         <body>
           <div class="header">
             <h1>PROFIT & LOSS STATEMENT</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
           <div class="date-section">
             <strong>Period: ${new Date(
@@ -194,7 +197,7 @@ export default function ProfitLoss() {
           </div>
           <div class="footer">
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p><strong>${portalName}</strong></p>
           </div>
           <script>
             window.onload = function() { window.print(); };

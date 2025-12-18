@@ -14,7 +14,8 @@ import { AuthContext } from "../../context/AuthContext";
 import Loader from "./Loader";
 
 export default function SalesInvoice() {
-  const { user } = useContext(AuthContext);
+  const { user, tenant } = useContext(AuthContext);
+  const portalName = tenant?.portalName || "Construction Management System";
   const [invoices, setInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -716,7 +717,7 @@ export default function SalesInvoice() {
         <body>
           <div class="header">
             <h1>SALES INVOICE</h1>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <div class="invoice-info">
@@ -960,7 +961,7 @@ export default function SalesInvoice() {
           <div class="footer">
             <p><strong>Thank you for your business!</strong></p>
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>YM CONSTRUCTIONS</p>
+            <p>${portalName}</p>
           </div>
 
           <script>
