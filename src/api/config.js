@@ -17,8 +17,8 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 60000, // Increased to 60 seconds for serverless cold starts
-  withCredentials: true, // Enable sending cookies for CSRF protection
+  timeout: 60000,
+  withCredentials: true,
   maxRedirects: 5, // Limit redirects
   validateStatus: (status) => status >= 200 && status < 300,
 });

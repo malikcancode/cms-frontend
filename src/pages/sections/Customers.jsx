@@ -23,7 +23,6 @@ export default function Customers() {
     address: "",
   });
 
-  // Fetch all customers on component mount
   useEffect(() => {
     fetchCustomers();
   }, []);

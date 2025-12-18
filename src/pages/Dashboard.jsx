@@ -29,7 +29,6 @@ export default function Dashboard() {
     } else {
       navigate(`/dashboard/${page}`);
     }
-    // Close sidebar on mobile after navigation
     if (window.innerWidth < 640) {
       setSidebarOpen(false);
     }
