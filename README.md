@@ -4,7 +4,7 @@ Modern React-based frontend for the Construction Management System with comprehe
 
 ## 🚀 Live Deployment
 
-- **Production URL**: https://construction-management-system-soft.vercel.app/
+- **Production URL**: [https://construction-management-system-soft.vercel.app/](https://cms-frontend-peach.vercel.app/)
 
 ## 📋 Features
 
